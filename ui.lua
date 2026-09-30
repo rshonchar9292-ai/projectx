@@ -739,21 +739,12 @@ function UI:init(Features)
     end)
 
     -- ==================================================
-    -- FLING TAB
+    -- FLING TAB (list only)
     -- ==================================================
-    createSection(FlingPage, "Quick Actions")
-
-    createActionButton(FlingPage, "FLING SHERIFF", Theme.Sheriff, function()
-        if Features.Fling then Features.Fling:flingSheriff() end
-    end)
-    createActionButton(FlingPage, "FLING MURDER", Theme.Murderer, function()
-        if Features.Fling then Features.Fling:flingMurderer() end
-    end)
-
     createSection(FlingPage, "Players — Click to Fling")
 
     local playerListFrame = Instance.new("Frame")
-    playerListFrame.Size = UDim2.new(1, -16, 0, 320)
+    playerListFrame.Size = UDim2.new(1, -16, 0, 380)
     playerListFrame.BackgroundColor3 = Theme.Element
     playerListFrame.BorderSizePixel = 0
     playerListFrame.Parent = FlingPage
