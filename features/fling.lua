@@ -1,6 +1,5 @@
 --// ╔══════════════════════════════════════════════════════════════╗
---// ║  ProjectX Fling — SkidFling Method                           ║
---// ║  Based on TrustHub fling (working SkidFling)                 ║
+--// ║  ProjectX Fling — SkidFling + Self Protection                ║
 --// ╚══════════════════════════════════════════════════════════════╝
 
 local Players    = game:GetService("Players")
@@ -13,7 +12,6 @@ local LocalPlayer = Players.LocalPlayer
 --//  STATE
 --// ============================================================
 local flingActive = false
-local OldPos = nil
 
 --// ============================================================
 --//  LOG / NOTIFY
@@ -87,7 +85,43 @@ local function isAlive(plr)
 end
 
 --// ============================================================
---//  SKIDFLING (working method)
+--//  SELF PROTECTION (щоб тебе самого не флипнуло)
+--// ============================================================
+local selfProtectionConn = nil
+local selfProtectionActive = false
+
+local function enableSelfProtection()
+    if selfProtectionActive then return end
+    selfProtectionActive = true
+
+    selfProtectionConn = RunService.Heartbeat:Connect(function()
+        if not selfProtectionActive then return end
+        local char = LocalPlayer.Character
+        if not char then return end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if not hrp then return end
+
+        -- Обмежуємо швидкість
+        local v = hrp.AssemblyLinearVelocity
+        if v.Magnitude > 100 then
+            hrp.AssemblyLinearVelocity = v.Unit * 100
+        end
+        if hrp.AssemblyAngularVelocity.Magnitude > 30 then
+            hrp.AssemblyAngularVelocity = Vector3.zero
+        end
+    end)
+end
+
+local function disableSelfProtection()
+    selfProtectionActive = false
+    if selfProtectionConn then
+        selfProtectionConn:Disconnect()
+        selfProtectionConn = nil
+    end
+end
+
+--// ============================================================
+--//  SKIDFLING (working method + захист)
 --// ============================================================
 local function SkidFling(TargetPlayer, duration)
     if not TargetPlayer or TargetPlayer == LocalPlayer then return false end
@@ -105,9 +139,12 @@ local function SkidFling(TargetPlayer, duration)
     local THead = TCharacter:FindFirstChild("Head")
     if not (THumanoid and TRootPart) then return false end
 
-    if RootPart.Velocity.Magnitude < 50 then
-        OldPos = RootPart.CFrame
-    end
+    -- ⚡ ЗБЕРІГАЄМО СВОЮ ПОЗИЦІЮ
+    local myOldPos = RootPart.CFrame
+    local myOldVelocity = RootPart.AssemblyLinearVelocity
+
+    -- ⚡ ВМИКАЄМО SELF-PROTECTION
+    enableSelfProtection()
 
     local FPos = function(BasePart, Pos, Ang)
         RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
@@ -124,6 +161,13 @@ local function SkidFling(TargetPlayer, duration)
         local Angle = 0
         repeat
             if not RootPart or not THumanoid then break end
+
+            -- ⚡ ПЕРІОДИЧНО ПОВЕРТАЄМО СЕБЕ НАЗАД
+            if tick() - Time > 0.05 then
+                RootPart.CFrame = myOldPos
+                myOldPos = RootPart.CFrame
+            end
+
             if BasePart.Velocity.Magnitude < 50 then
                 Angle = Angle + 100
                 FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
@@ -175,10 +219,19 @@ local function SkidFling(TargetPlayer, duration)
     BV:Destroy()
     Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
 
-    task.wait(0.3)
-    if OldPos and RootPart then
-        pcall(function() RootPart.CFrame = OldPos end)
+    -- ⚡ ПОВЕРТАЄМО СЕБЕ
+    task.wait(0.1)
+    if RootPart then
+        pcall(function()
+            RootPart.CFrame = myOldPos
+            RootPart.AssemblyLinearVelocity = myOldVelocity
+            RootPart.AssemblyAngularVelocity = Vector3.zero
+        end)
     end
+
+    -- ⚡ ВИМИКАЄМО SELF-PROTECTION
+    task.wait(0.3)
+    disableSelfProtection()
 
     workspace.FallenPartsDestroyHeight = prevDestroy
     return true
@@ -197,7 +250,7 @@ local function flingPlayer(target)
     log("Flinging: " .. target.Name .. " (" .. getRole(target) .. ")")
 
     task.spawn(function()
-        local ok, err = pcall(SkidFling, target, 2)
+        local ok, err = pcall(SkidFling, target, 1.5)
         if ok then
             log("✓ Fling done: " .. target.Name)
             notify("💥 Fling", "Flinged: " .. target.Name, 2)
@@ -249,7 +302,7 @@ function Fling:getRole(plr) return getRole(plr) end
 function Fling:getRoleColor(role) return getRoleColor(role) end
 function Fling:isFlinging() return flingActive end
 
--- Stubs для сумісності з UI (якщо випадково викликаються)
+-- Stubs
 function Fling:flingSheriff() return 0 end
 function Fling:flingMurderer() return 0 end
 function Fling:setEnabled() end
@@ -261,7 +314,7 @@ function Fling:setTouchFling() end
 function Fling:setAutoRetry() end
 
 log("═══════════════════════════════")
-log("ProjectX Fling loaded — SkidFling")
+log("ProjectX Fling loaded (Self-Protected)")
 log("═══════════════════════════════")
 
 return Fling.new()
