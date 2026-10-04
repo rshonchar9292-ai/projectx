@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TrustHub та ProjectX — потужні Roblox-скрипти">
+    <meta name="description" content="TrustHub, ProjectX та Fotli Hub — потужні Roblox-скрипти">
     <title>Roblox Scripts Collection</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* ===== CSS ЗМІННІ (тема) ===== */
         :root {
             --bg: #0d0d12;
             --panel: #14141c;
@@ -27,20 +26,13 @@
             --murderer: #ff3c3c;
             --sheriff: #3c96ff;
             --innocent: #50dc78;
+            --fortline: #ff9e5f;
             --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ===== RESET ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 80px;
-        }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
@@ -54,7 +46,7 @@
         a { color: inherit; text-decoration: none; }
         button { font-family: inherit; cursor: pointer; border: none; }
 
-        /* ===== АНІМОВАНИЙ ФОН HERO ===== */
+        /* ===== АНІМОВАНИЙ ФОН ===== */
         .bg-animation {
             position: fixed;
             inset: 0;
@@ -62,7 +54,6 @@
             overflow: hidden;
             pointer-events: none;
         }
-
         .bg-blob {
             position: absolute;
             border-radius: 50%;
@@ -70,25 +61,9 @@
             opacity: 0.35;
             animation: float 20s infinite ease-in-out;
         }
-
-        .bg-blob-1 {
-            width: 500px; height: 500px;
-            background: var(--accent);
-            top: -200px; left: -200px;
-            animation-delay: 0s;
-        }
-        .bg-blob-2 {
-            width: 400px; height: 400px;
-            background: #a56eff;
-            bottom: -150px; right: -150px;
-            animation-delay: -7s;
-        }
-        .bg-blob-3 {
-            width: 300px; height: 300px;
-            background: var(--sheriff);
-            top: 50%; left: 50%;
-            animation-delay: -14s;
-        }
+        .bg-blob-1 { width: 500px; height: 500px; background: var(--accent); top: -200px; left: -200px; }
+        .bg-blob-2 { width: 400px; height: 400px; background: #a56eff; bottom: -150px; right: -150px; animation-delay: -7s; }
+        .bg-blob-3 { width: 300px; height: 300px; background: var(--sheriff); top: 50%; left: 50%; animation-delay: -14s; }
 
         @keyframes float {
             0%, 100% { transform: translate(0, 0) scale(1); }
@@ -107,12 +82,10 @@
             border-bottom: 1px solid var(--stroke);
             transition: var(--transition);
         }
-
         header.scrolled {
             background: rgba(13, 13, 18, 0.95);
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
         }
-
         .nav {
             max-width: 1280px;
             margin: 0 auto;
@@ -122,7 +95,6 @@
             justify-content: space-between;
             gap: 20px;
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -131,7 +103,6 @@
             font-size: 18px;
             letter-spacing: -0.5px;
         }
-
         .logo-icon {
             width: 32px; height: 32px;
             background: linear-gradient(135deg, var(--accent), #a56eff);
@@ -142,18 +113,11 @@
             font-size: 16px;
             animation: pulse-logo 3s infinite ease-in-out;
         }
-
         @keyframes pulse-logo {
             0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 var(--accent-glow); }
             50% { transform: scale(1.05); box-shadow: 0 0 20px 4px var(--accent-glow); }
         }
-
-        .nav-links {
-            display: flex;
-            gap: 28px;
-            list-style: none;
-        }
-
+        .nav-links { display: flex; gap: 28px; list-style: none; }
         .nav-links a {
             font-size: 14px;
             font-weight: 500;
@@ -161,7 +125,6 @@
             transition: var(--transition);
             position: relative;
         }
-
         .nav-links a::after {
             content: '';
             position: absolute;
@@ -171,19 +134,10 @@
             border-radius: 2px;
             transition: width var(--transition);
         }
+        .nav-links a:hover { color: var(--text); }
+        .nav-links a:hover::after { width: 100%; }
 
-        .nav-links a:hover {
-            color: var(--text);
-        }
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .nav-right { display: flex; align-items: center; gap: 12px; }
 
         /* ===== ПЕРЕМИКАЧ МОВИ ===== */
         .lang-switch {
@@ -194,7 +148,6 @@
             position: relative;
             border: 1px solid var(--stroke);
         }
-
         .lang-switch button {
             padding: 6px 12px;
             background: transparent;
@@ -205,11 +158,7 @@
             transition: var(--transition);
             z-index: 1;
         }
-
-        .lang-switch button.active {
-            color: var(--text);
-        }
-
+        .lang-switch button.active { color: var(--text); }
         .lang-slider {
             position: absolute;
             top: 3px; left: 3px;
@@ -219,10 +168,7 @@
             border-radius: 7px;
             transition: transform var(--transition);
         }
-
-        .lang-switch.en .lang-slider {
-            transform: translateX(42px);
-        }
+        .lang-switch.en .lang-slider { transform: translateX(42px); }
 
         /* ===== КНОПКИ ===== */
         .btn {
@@ -236,34 +182,16 @@
             transition: var(--transition);
             border: 1px solid transparent;
         }
-
-        .btn-primary {
-            background: var(--accent);
-            color: #fff;
-        }
+        .btn-primary { background: var(--accent); color: #fff; }
         .btn-primary:hover {
             background: var(--accent-dark);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px var(--accent-glow);
         }
-
-        .btn-outline {
-            background: transparent;
-            border-color: var(--stroke);
-            color: var(--text);
-        }
-        .btn-outline:hover {
-            background: var(--element);
-            border-color: var(--accent);
-        }
-
-        .btn-ghost {
-            background: var(--element);
-            color: var(--text);
-        }
-        .btn-ghost:hover {
-            background: var(--element-hover);
-        }
+        .btn-outline { background: transparent; border-color: var(--stroke); color: var(--text); }
+        .btn-outline:hover { background: var(--element); border-color: var(--accent); }
+        .btn-ghost { background: var(--element); color: var(--text); }
+        .btn-ghost:hover { background: var(--element-hover); }
 
         /* ===== HERO ===== */
         .hero {
@@ -275,12 +203,7 @@
             padding: 120px 24px 80px;
             position: relative;
         }
-
-        .hero-content {
-            max-width: 800px;
-            z-index: 2;
-        }
-
+        .hero-content { max-width: 800px; z-index: 2; }
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -295,7 +218,6 @@
             margin-bottom: 24px;
             animation: fadeDown 0.8s ease-out;
         }
-
         .hero-badge-dot {
             width: 6px; height: 6px;
             background: var(--success);
@@ -303,17 +225,14 @@
             animation: blink 1.5s infinite;
             box-shadow: 0 0 8px var(--success);
         }
-
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
-
         @keyframes fadeDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .hero h1 {
             font-size: clamp(36px, 6vw, 68px);
             font-weight: 800;
@@ -327,19 +246,16 @@
             background-size: 200% 200%;
             animation: gradientShift 6s infinite ease-in-out;
         }
-
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
-
         .typewriter {
             font-size: clamp(16px, 2vw, 20px);
             color: var(--text-dim);
             margin-bottom: 36px;
             min-height: 30px;
         }
-
         .typewriter .cursor {
             display: inline-block;
             width: 2px;
@@ -349,19 +265,16 @@
             animation: blinkCursor 1s infinite;
             margin-left: 2px;
         }
-
         @keyframes blinkCursor {
             0%, 49% { opacity: 1; }
             50%, 100% { opacity: 0; }
         }
-
         .hero-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .scroll-indicator {
             position: absolute;
             bottom: 30px;
@@ -371,31 +284,20 @@
             font-size: 24px;
             animation: bounce 2s infinite;
         }
-
         @keyframes bounce {
             0%, 100% { transform: translateX(-50%) translateY(0); }
             50% { transform: translateX(-50%) translateY(10px); }
         }
 
         /* ===== СЕКЦІЇ ===== */
-        section {
-            padding: 100px 24px;
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
+        section { padding: 100px 24px; max-width: 1280px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
         .section-title {
             font-size: clamp(28px, 4vw, 42px);
             font-weight: 800;
             letter-spacing: -1px;
             margin-bottom: 12px;
         }
-
         .section-subtitle {
             color: var(--text-dim);
             font-size: 16px;
@@ -414,7 +316,6 @@
             overflow: hidden;
             transition: var(--transition);
         }
-
         .script-card::before {
             content: '';
             position: absolute;
@@ -424,17 +325,12 @@
             opacity: 0;
             transition: opacity var(--transition);
         }
-
         .script-card:hover {
             border-color: var(--accent);
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
-
-        .script-card:hover::before {
-            opacity: 1;
-        }
-
+        .script-card:hover::before { opacity: 1; }
         .script-header {
             display: flex;
             align-items: center;
@@ -442,7 +338,6 @@
             margin-bottom: 24px;
             flex-wrap: wrap;
         }
-
         .script-icon {
             width: 60px; height: 60px;
             border-radius: 16px;
@@ -452,42 +347,37 @@
             font-size: 28px;
             flex-shrink: 0;
         }
-
         .script-icon.trusthub {
             background: linear-gradient(135deg, #ff5f5f, #ff9e5f);
             animation: pulse-icon 3s infinite;
         }
-
         .script-icon.projectx {
             background: linear-gradient(135deg, var(--accent), #a56eff);
             animation: pulse-icon 3s infinite;
             animation-delay: -1.5s;
         }
-
+        .script-icon.fortline {
+            background: linear-gradient(135deg, #ff9e5f, #ffdf5f);
+            animation: pulse-icon 3s infinite;
+            animation-delay: -0.75s;
+        }
         @keyframes pulse-icon {
             0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.15); }
             50% { transform: scale(1.05); box-shadow: 0 0 20px 4px rgba(255,255,255,0.15); }
         }
-
         .script-title-block h3 {
             font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
             margin-bottom: 4px;
         }
-
-        .script-desc {
-            color: var(--text-dim);
-            font-size: 14px;
-        }
-
+        .script-desc { color: var(--text-dim); font-size: 14px; }
         .script-tags {
             display: flex;
             gap: 8px;
             margin-left: auto;
             flex-wrap: wrap;
         }
-
         .tag {
             padding: 4px 12px;
             border-radius: 100px;
@@ -496,23 +386,22 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         .tag-mm2 {
             background: rgba(255, 60, 60, 0.15);
             color: var(--murderer);
             border: 1px solid rgba(255, 60, 60, 0.3);
         }
-
         .tag-universal {
             background: rgba(130, 150, 255, 0.15);
             color: var(--accent);
             border: 1px solid rgba(130, 150, 255, 0.3);
         }
-
-        .tag-version {
-            background: var(--element);
-            color: var(--text-dim);
+        .tag-fortline {
+            background: rgba(255, 158, 95, 0.15);
+            color: var(--fortline);
+            border: 1px solid rgba(255, 158, 95, 0.3);
         }
+        .tag-version { background: var(--element); color: var(--text-dim); }
 
         /* ===== СПИСОК ФУНКЦІЙ ===== */
         .features-list {
@@ -521,7 +410,6 @@
             gap: 10px;
             margin-bottom: 28px;
         }
-
         .feature-item {
             display: flex;
             align-items: center;
@@ -533,17 +421,12 @@
             border: 1px solid transparent;
             transition: var(--transition);
         }
-
         .feature-item:hover {
             background: var(--element);
             border-color: var(--stroke);
             transform: translateX(4px);
         }
-
-        .feature-icon {
-            font-size: 18px;
-            flex-shrink: 0;
-        }
+        .feature-icon { font-size: 18px; flex-shrink: 0; }
 
         /* ===== БЛОК З КОДОМ ===== */
         .code-block {
@@ -559,15 +442,8 @@
             overflow-x: auto;
             white-space: nowrap;
         }
-
-        .code-block::-webkit-scrollbar {
-            height: 6px;
-        }
-        .code-block::-webkit-scrollbar-thumb {
-            background: var(--stroke);
-            border-radius: 3px;
-        }
-
+        .code-block::-webkit-scrollbar { height: 6px; }
+        .code-block::-webkit-scrollbar-thumb { background: var(--stroke); border-radius: 3px; }
         .code-label {
             position: absolute;
             top: -10px;
@@ -580,12 +456,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-
-        .script-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .script-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
         /* ===== HOW TO USE ===== */
         .steps {
@@ -593,7 +464,6 @@
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
         }
-
         .step {
             background: var(--panel);
             border: 1px solid var(--stroke);
@@ -602,12 +472,7 @@
             position: relative;
             transition: var(--transition);
         }
-
-        .step:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-        }
-
+        .step:hover { border-color: var(--accent); transform: translateY(-4px); }
         .step-number {
             position: absolute;
             top: -16px;
@@ -623,40 +488,18 @@
             color: #fff;
             box-shadow: 0 4px 12px var(--accent-glow);
         }
-
-        .step h4 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            margin-top: 10px;
-        }
-
-        .step p {
-            font-size: 13px;
-            color: var(--text-dim);
-        }
+        .step h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; margin-top: 10px; }
+        .step p { font-size: 13px; color: var(--text-dim); }
 
         /* ===== ПОРІВНЯННЯ ===== */
-        .comparison {
-            overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid var(--stroke);
-        }
-
-        .comparison table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 500px;
-        }
-
-        .comparison th,
-        .comparison td {
+        .comparison { overflow-x: auto; border-radius: 16px; border: 1px solid var(--stroke); }
+        .comparison table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .comparison th, .comparison td {
             padding: 16px 20px;
             text-align: left;
             border-bottom: 1px solid var(--stroke);
             font-size: 14px;
         }
-
         .comparison th {
             background: var(--panel-light);
             font-weight: 700;
@@ -665,30 +508,13 @@
             letter-spacing: 0.5px;
             color: var(--text-dim);
         }
-
-        .comparison th.trusthub-col {
-            color: var(--murderer);
-        }
-        .comparison th.projectx-col {
-            color: var(--accent);
-        }
-
-        .comparison tr:last-child td {
-            border-bottom: none;
-        }
-
-        .comparison tr:hover td {
-            background: rgba(130, 150, 255, 0.03);
-        }
-
-        .check {
-            color: var(--success);
-            font-weight: 700;
-        }
-        .cross {
-            color: var(--danger);
-            font-weight: 700;
-        }
+        .comparison th.trusthub-col { color: var(--murderer); }
+        .comparison th.projectx-col { color: var(--accent); }
+        .comparison th.fortline-col { color: var(--fortline); }
+        .comparison tr:last-child td { border-bottom: none; }
+        .comparison tr:hover td { background: rgba(130, 150, 255, 0.03); }
+        .check { color: var(--success); font-weight: 700; }
+        .cross { color: var(--danger); font-weight: 700; }
 
         /* ===== FAQ ===== */
         .faq-item {
@@ -699,11 +525,7 @@
             overflow: hidden;
             transition: var(--transition);
         }
-
-        .faq-item:hover {
-            border-color: var(--accent);
-        }
-
+        .faq-item:hover { border-color: var(--accent); }
         .faq-question {
             padding: 20px 24px;
             font-weight: 600;
@@ -714,18 +536,15 @@
             cursor: pointer;
             user-select: none;
         }
-
         .faq-question .arrow {
             transition: transform var(--transition);
             color: var(--text-dim);
             font-size: 12px;
         }
-
         .faq-item.open .faq-question .arrow {
             transform: rotate(180deg);
             color: var(--accent);
         }
-
         .faq-answer {
             max-height: 0;
             overflow: hidden;
@@ -734,11 +553,7 @@
             color: var(--text-dim);
             font-size: 14px;
         }
-
-        .faq-item.open .faq-answer {
-            max-height: 200px;
-            padding: 0 24px 20px;
-        }
+        .faq-item.open .faq-answer { max-height: 200px; padding: 0 24px 20px; }
 
         /* ===== FOOTER ===== */
         footer {
@@ -747,7 +562,6 @@
             padding: 48px 24px 24px;
             margin-top: 60px;
         }
-
         .footer-content {
             max-width: 1280px;
             margin: 0 auto;
@@ -757,7 +571,6 @@
             justify-content: space-between;
             margin-bottom: 32px;
         }
-
         .footer-col h5 {
             font-size: 13px;
             font-weight: 700;
@@ -766,7 +579,6 @@
             color: var(--text-dim);
             margin-bottom: 16px;
         }
-
         .footer-col a {
             display: block;
             font-size: 14px;
@@ -774,12 +586,7 @@
             margin-bottom: 10px;
             transition: var(--transition);
         }
-
-        .footer-col a:hover {
-            color: var(--accent);
-            transform: translateX(4px);
-        }
-
+        .footer-col a:hover { color: var(--accent); transform: translateX(4px); }
         .footer-bottom {
             max-width: 1280px;
             margin: 0 auto;
@@ -792,7 +599,6 @@
             font-size: 13px;
             color: var(--text-dim);
         }
-
         .disclaimer {
             font-size: 12px;
             color: var(--text-dim);
@@ -809,11 +615,7 @@
             transform: translateY(40px);
             transition: opacity 0.8s ease-out, transform 0.8s ease-out;
         }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
@@ -824,17 +626,9 @@
             .hero { padding: 100px 20px 60px; }
         }
 
-        /* ===== КНОПКА КОПІЮВАННЯ — ЕФЕКТ ===== */
-        .btn-copy {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-copy.copied {
-            background: var(--success) !important;
-            color: #0d0d12 !important;
-        }
-
+        /* ===== КНОПКА КОПІЮВАННЯ ===== */
+        .btn-copy { position: relative; overflow: hidden; }
+        .btn-copy.copied { background: var(--success) !important; color: #0d0d12 !important; }
         .btn-copy.copied::before {
             content: '';
             position: absolute;
@@ -842,7 +636,6 @@
             background: radial-gradient(circle, rgba(255,255,255,0.6), transparent 70%);
             animation: copyPulse 0.6s ease-out;
         }
-
         @keyframes copyPulse {
             from { transform: scale(0); opacity: 1; }
             to { transform: scale(2); opacity: 0; }
@@ -851,7 +644,6 @@
 </head>
 <body>
 
-    <!-- ===== АНІМОВАНИЙ ФОН ===== -->
     <div class="bg-animation">
         <div class="bg-blob bg-blob-1"></div>
         <div class="bg-blob bg-blob-2"></div>
@@ -867,15 +659,15 @@
             </a>
 
             <ul class="nav-links">
-                <li><a href="#trusthub" data-ua="TrustHub" data-en="TrustHub">TrustHub</a></li>
-                <li><a href="#projectx" data-ua="ProjectX" data-en="ProjectX">ProjectX</a></li>
+                <li><a href="#trusthub">TrustHub</a></li>
+                <li><a href="#projectx">ProjectX</a></li>
+                <li><a href="#fortline">Fortline</a></li>
                 <li><a href="#howto" data-ua="Як запустити" data-en="How to use">Як запустити</a></li>
                 <li><a href="#compare" data-ua="Порівняння" data-en="Compare">Порівняння</a></li>
-                <li><a href="#faq" data-ua="FAQ" data-en="FAQ">FAQ</a></li>
+                <li><a href="#faq">FAQ</a></li>
             </ul>
 
             <div class="nav-right">
-                <!-- Перемикач мов -->
                 <div class="lang-switch" id="langSwitch">
                     <div class="lang-slider"></div>
                     <button class="active" data-lang="ua">UA</button>
@@ -897,7 +689,7 @@
         <div class="hero-content">
             <div class="hero-badge">
                 <span class="hero-badge-dot"></span>
-                <span data-ua="Доступно 2 скрипти" data-en="2 scripts available">Доступно 2 скрипти</span>
+                <span data-ua="Доступно 3 скрипти" data-en="3 scripts available">Доступно 3 скрипти</span>
             </div>
 
             <h1>Roblox Scripts Collection</h1>
@@ -925,7 +717,7 @@
         <div class="section-header reveal">
             <div class="section-title">🎯 TrustHub</div>
             <div class="section-subtitle">
-                <span data-ua="Потужний чит-хаб для Murder Mystery 2 з 13+ функціями" 
+                <span data-ua="Потужний чит-хаб для Murder Mystery 2 з 13+ функціями"
                       data-en="Powerful cheat hub for Murder Mystery 2 with 13+ features">
                     Потужний чит-хаб для Murder Mystery 2 з 13+ функціями
                 </span>
@@ -984,7 +776,7 @@
         <div class="section-header reveal">
             <div class="section-title">⚡ ProjectX</div>
             <div class="section-subtitle">
-                <span data-ua="Універсальний хаб для будь-якої гри Roblox" 
+                <span data-ua="Універсальний хаб для будь-якої гри Roblox"
                       data-en="Universal hub for any Roblox game">
                     Універсальний хаб для будь-якої гри Roblox
                 </span>
@@ -1030,6 +822,64 @@
         </div>
     </section>
 
+    <!-- ===== FORTLINE ===== -->
+    <section id="fortline">
+        <div class="section-header reveal">
+            <div class="section-title">🎮 Fortline</div>
+            <div class="section-subtitle">
+                <span data-ua="Спеціалізований чит-хаб для гри FORTLINE з Silent Aim, ESP та Aimbot"
+                      data-en="Specialized cheat hub for FORTLINE with Silent Aim, ESP and Aimbot">
+                    Спеціалізований чит-хаб для гри FORTLINE з Silent Aim, ESP та Aimbot
+                </span>
+            </div>
+        </div>
+
+        <div class="script-card reveal">
+            <div class="script-header">
+                <div class="script-icon fortline">🎮</div>
+                <div class="script-title-block">
+                    <h3>Fotli Hub — Fortline Edition</h3>
+                    <div class="script-desc">
+                        <span data-ua="Для гри FORTLINE" data-en="For FORTLINE">Для гри FORTLINE</span>
+                    </div>
+                </div>
+                <div class="script-tags">
+                    <span class="tag tag-fortline">FORTLINE Only</span>
+                    <span class="tag tag-version">v1.0</span>
+                </div>
+            </div>
+
+            <div class="features-list">
+                <div class="feature-item"><span class="feature-icon">🎯</span>Silent Aim (Fortline)</div>
+                <div class="feature-item"><span class="feature-icon">🔫</span>Camera Aimbot</div>
+                <div class="feature-item"><span class="feature-icon">👁</span>Player ESP</div>
+                <div class="feature-item"><span class="feature-icon">💡</span>Highlight ESP</div>
+                <div class="feature-item"><span class="feature-icon">🎨</span>FOV Circle</div>
+                <div class="feature-item"><span class="feature-icon">✈</span>Fly</div>
+                <div class="feature-item"><span class="feature-icon">🏃</span>Speed</div>
+                <div class="feature-item"><span class="feature-icon">🚫</span>Noclip</div>
+                <div class="feature-item"><span class="feature-icon">🛡</span>Team Check</div>
+                <div class="feature-item"><span class="feature-icon">🎯</span>Hit Chance</div>
+                <div class="feature-item"><span class="feature-icon">👤</span>Aim at Head</div>
+                <div class="feature-item"><span class="feature-icon">🖱</span>Hold RMB</div>
+            </div>
+
+            <div class="code-block">
+                <span class="code-label">LOADSTRING</span>
+                <span id="fortline-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/rshonchar9292-ai/fotli-hub/main/loader.lua"))()</span>
+            </div>
+
+            <div class="script-actions">
+                <button class="btn btn-primary btn-copy" data-copy="fortline-code">
+                    <span data-ua="📋 Копіювати скрипт" data-en="📋 Copy script">📋 Копіювати скрипт</span>
+                </button>
+                <a href="https://github.com/rshonchar9292-ai/fotli-hub" target="_blank" class="btn btn-outline">
+                    <span data-ua="GitHub репозиторій" data-en="GitHub repository">GitHub репозиторій</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- ===== HOW TO USE ===== -->
     <section id="howto">
         <div class="section-header reveal">
@@ -1037,7 +887,7 @@
                 <span data-ua="Як запустити скрипт" data-en="How to use the script">Як запустити скрипт</span>
             </div>
             <div class="section-subtitle">
-                <span data-ua="5 простих кроків від завантаження до запуску" 
+                <span data-ua="5 простих кроків від завантаження до запуску"
                       data-en="5 simple steps from download to launch">
                     5 простих кроків від завантаження до запуску
                 </span>
@@ -1048,7 +898,7 @@
             <div class="step reveal">
                 <div class="step-number">1</div>
                 <h4 data-ua="Завантаж екзекутор" data-en="Download executor">Завантаж екзекутор</h4>
-                <p data-ua="Delta, Xeno, Solara або Wave — будь-який підійде." 
+                <p data-ua="Delta, Xeno, Solara або Wave — будь-який підійде."
                    data-en="Delta, Xeno, Solara or Wave — any will work.">
                     Delta, Xeno, Solara або Wave — будь-який підійде.
                 </p>
@@ -1057,16 +907,16 @@
             <div class="step reveal">
                 <div class="step-number">2</div>
                 <h4 data-ua="Запусти Roblox" data-en="Launch Roblox">Запусти Roblox</h4>
-                <p data-ua="Зайди у будь-яку гру (для TrustHub — MM2)." 
-                   data-en="Join any game (for TrustHub — MM2).">
-                    Зайди у будь-яку гру (для TrustHub — MM2).
+                <p data-ua="Зайди у потрібну гру (MM2, будь-яка, або FORTLINE)."
+                   data-en="Join the target game (MM2, any, or FORTLINE).">
+                    Зайди у потрібну гру (MM2, будь-яка, або FORTLINE).
                 </p>
             </div>
 
             <div class="step reveal">
                 <div class="step-number">3</div>
                 <h4 data-ua="Скопіюй скрипт" data-en="Copy the script">Скопіюй скрипт</h4>
-                <p data-ua="Натисни кнопку «Копіювати скрипт» вище." 
+                <p data-ua="Натисни кнопку «Копіювати скрипт» вище."
                    data-en="Click the 'Copy script' button above.">
                     Натисни кнопку «Копіювати скрипт» вище.
                 </p>
@@ -1075,7 +925,7 @@
             <div class="step reveal">
                 <div class="step-number">4</div>
                 <h4 data-ua="Вставь у екзекутор" data-en="Paste in executor">Вставь у екзекутор</h4>
-                <p data-ua="Вставь код і натисни Execute." 
+                <p data-ua="Вставь код і натисни Execute."
                    data-en="Paste the code and press Execute.">
                     Вставь код і натисни Execute.
                 </p>
@@ -1084,7 +934,7 @@
             <div class="step reveal">
                 <div class="step-number">5</div>
                 <h4 data-ua="Натисни F4" data-en="Press F4">Натисни F4</h4>
-                <p data-ua="Меню скрипта відкриється в грі." 
+                <p data-ua="Меню скрипта відкриється в грі."
                    data-en="The script menu will open in-game.">
                     Меню скрипта відкриється в грі.
                 </p>
@@ -1099,7 +949,7 @@
                 <span data-ua="Порівняння" data-en="Comparison">Порівняння</span>
             </div>
             <div class="section-subtitle">
-                <span data-ua="Який скрипт вибрати для твоїх задач" 
+                <span data-ua="Який скрипт вибрати для твоїх задач"
                       data-en="Which script to choose for your needs">
                     Який скрипт вибрати для твоїх задач
                 </span>
@@ -1113,6 +963,7 @@
                         <th data-ua="Функція" data-en="Feature">Функція</th>
                         <th class="trusthub-col">TrustHub</th>
                         <th class="projectx-col">ProjectX</th>
+                        <th class="fortline-col">Fotli Hub</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1120,19 +971,29 @@
                         <td data-ua="Кількість вкладок" data-en="Number of tabs">Кількість вкладок</td>
                         <td><strong>7</strong></td>
                         <td><strong>3</strong></td>
+                        <td><strong>4</strong></td>
                     </tr>
                     <tr>
                         <td>Silent Aim</td>
                         <td class="check">✅</td>
                         <td class="cross">❌</td>
+                        <td class="check">✅</td>
+                    </tr>
+                    <tr>
+                        <td>Camera Aimbot</td>
+                        <td class="cross">❌</td>
+                        <td class="cross">❌</td>
+                        <td class="check">✅</td>
                     </tr>
                     <tr>
                         <td>ESP</td>
                         <td class="check">✅</td>
                         <td class="cross">❌</td>
+                        <td class="check">✅</td>
                     </tr>
                     <tr>
                         <td>Fly</td>
+                        <td class="check">✅</td>
                         <td class="check">✅</td>
                         <td class="check">✅</td>
                     </tr>
@@ -1140,21 +1001,25 @@
                         <td>Fling</td>
                         <td class="check">✅</td>
                         <td class="check">✅</td>
+                        <td class="cross">❌</td>
                     </tr>
                     <tr>
                         <td data-ua="Анімації" data-en="Animations">Анімації</td>
                         <td class="check">✅</td>
                         <td class="check">✅</td>
+                        <td class="cross">❌</td>
                     </tr>
                     <tr>
                         <td>Auto Farm</td>
                         <td class="check">✅</td>
+                        <td class="cross">❌</td>
                         <td class="cross">❌</td>
                     </tr>
                     <tr>
                         <td data-ua="Рекомендовано для" data-en="Recommended for">Рекомендовано для</td>
                         <td><strong>MM2</strong></td>
                         <td><strong data-ua="Будь-якої гри" data-en="Any game">Будь-якої гри</strong></td>
+                        <td><strong>FORTLINE</strong></td>
                     </tr>
                 </tbody>
             </table>
@@ -1175,7 +1040,7 @@
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                <span data-ua="Так, повністю безкоштовно. Код відкритий на GitHub." 
+                <span data-ua="Так, повністю безкоштовно. Код відкритий на GitHub."
                       data-en="Yes, completely free. Code is open-source on GitHub.">
                     Так, повністю безкоштовно. Код відкритий на GitHub.
                 </span>
@@ -1188,9 +1053,22 @@
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                <span data-ua="Delta, Xeno, Solara або Wave. Уникай мобільних екзекуторів (Arceus X, Codex)." 
+                <span data-ua="Delta, Xeno, Solara або Wave. Уникай мобільних екзекуторів (Arceus X, Codex)."
                       data-en="Delta, Xeno, Solara or Wave. Avoid mobile executors (Arceus X, Codex).">
                     Delta, Xeno, Solara або Wave. Уникай мобільних екзекуторів (Arceus X, Codex).
+                </span>
+            </div>
+        </div>
+
+        <div class="faq-item reveal">
+            <div class="faq-question">
+                <span data-ua="Для яких ігор підходить Fotli Hub?" data-en="Which games is Fotli Hub for?">Для яких ігор підходить Fotli Hub?</span>
+                <span class="arrow">▼</span>
+            </div>
+            <div class="faq-answer">
+                <span data-ua="Fotli Hub створений спеціально для гри FORTLINE. Містить Silent Aim, Camera Aimbot, ESP, Fly, Speed та Noclip."
+                      data-en="Fotli Hub is made specifically for FORTLINE. Includes Silent Aim, Camera Aimbot, ESP, Fly, Speed and Noclip.">
+                    Fotli Hub створений спеціально для гри FORTLINE. Містить Silent Aim, Camera Aimbot, ESP, Fly, Speed та Noclip.
                 </span>
             </div>
         </div>
@@ -1201,7 +1079,7 @@
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                <span data-ua="Використовуй на свій ризик. Скрипти створені для освітніх цілей." 
+                <span data-ua="Використовуй на свій ризик. Скрипти створені для освітніх цілей."
                       data-en="Use at your own risk. Scripts are for educational purposes.">
                     Використовуй на свій ризик. Скрипти створені для освітніх цілей.
                 </span>
@@ -1214,7 +1092,7 @@
                 <span class="arrow">▼</span>
             </div>
             <div class="faq-answer">
-                <span data-ua="Нічого не треба робити — оновлюється автоматично з GitHub." 
+                <span data-ua="Нічого не треба робити — оновлюється автоматично з GitHub."
                       data-en="Nothing to do — updates automatically from GitHub.">
                     Нічого не треба робити — оновлюється автоматично з GitHub.
                 </span>
@@ -1231,8 +1109,8 @@
                     <span>My Scripts</span>
                 </a>
                 <p style="color: var(--text-dim); font-size: 13px; max-width: 250px;">
-                    <span data-ua="Два потужні хаби для Roblox" data-en="Two powerful hubs for Roblox">
-                        Два потужні хаби для Roblox
+                    <span data-ua="Три потужні хаби для Roblox" data-en="Three powerful hubs for Roblox">
+                        Три потужні хаби для Roblox
                     </span>
                 </p>
             </div>
@@ -1241,6 +1119,7 @@
                 <h5 data-ua="Проекти" data-en="Projects">Проекти</h5>
                 <a href="https://github.com/rshonchar9292-ai/trusthub" target="_blank">TrustHub</a>
                 <a href="https://github.com/rshonchar9292-ai/projectx" target="_blank">ProjectX</a>
+                <a href="https://github.com/rshonchar9292-ai/fotli-hub" target="_blank">Fotli Hub</a>
             </div>
 
             <div class="footer-col">
@@ -1252,7 +1131,7 @@
         <div class="footer-bottom">
             <div>© 2025 My Scripts</div>
             <div>
-                <span data-ua="Зроблено з ❤️ для Roblox-спільноти" 
+                <span data-ua="Зроблено з ❤️ для Roblox-спільноти"
                       data-en="Made with ❤️ for the Roblox community">
                     Зроблено з ❤️ для Roblox-спільноти
                 </span>
@@ -1260,7 +1139,7 @@
         </div>
 
         <div class="disclaimer">
-            <span data-ua="Ці скрипти створені для освітніх цілей. Використовуйте на свій ризик." 
+            <span data-ua="Ці скрипти створені для освітніх цілей. Використовуйте на свій ризик."
                   data-en="These scripts are for educational purposes. Use at your own risk.">
                 Ці скрипти створені для освітніх цілей. Використовуйте на свій ризик.
             </span>
@@ -1269,52 +1148,41 @@
 
     <!-- ===== JAVASCRIPT ===== -->
     <script>
-        // ==========================================
-        // 1. Header scroll effect
-        // ==========================================
+        // 1. Header scroll
         const header = document.getElementById('header');
         window.addEventListener('scroll', () => {
             header.classList.toggle('scrolled', window.scrollY > 20);
         });
 
-        // ==========================================
-        // 2. Smooth scroll для всіх якорів
-        // ==========================================
+        // 2. Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(link => {
             link.addEventListener('click', e => {
                 e.preventDefault();
                 const target = document.querySelector(link.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
 
-        // ==========================================
-        // 3. Typewriter ефект для hero
-        // ==========================================
+        // 3. Typewriter
         const typewriterEl = document.getElementById('typewriterText');
         const typewriterPhrases = [
-            'Два потужні хаби для Roblox — TrustHub та ProjectX',
+            'Три потужні хаби для Roblox — TrustHub, ProjectX та Fotli Hub',
             'TrustHub — Silent Aim + ESP + Fling для MM2',
             'ProjectX — універсальний хаб для будь-якої гри',
-            'Two powerful hubs for Roblox — TrustHub & ProjectX'
+            'Fotli Hub — Silent Aim + Aimbot + ESP для FORTLINE',
+            'Three powerful hubs for Roblox — TrustHub, ProjectX & Fotli Hub'
         ];
-
         let typeIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
-
         function typeLoop() {
             const current = typewriterPhrases[typeIndex];
             const speed = isDeleting ? 30 : 60;
-
             if (isDeleting) {
                 typewriterEl.textContent = current.substring(0, charIndex--);
             } else {
                 typewriterEl.textContent = current.substring(0, charIndex++);
             }
-
             if (!isDeleting && charIndex > current.length) {
                 setTimeout(() => { isDeleting = true; typeLoop(); }, 2000);
             } else if (isDeleting && charIndex < 0) {
@@ -1327,26 +1195,18 @@
         }
         typeLoop();
 
-        // ==========================================
         // 4. Copy to clipboard
-        // ==========================================
         document.querySelectorAll('.btn-copy').forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetId = btn.dataset.copy;
                 const text = document.getElementById(targetId).textContent.trim();
-
                 navigator.clipboard.writeText(text).then(() => {
-                    // Оригінальний текст
                     const originalHTML = btn.innerHTML;
-
-                    // Ефект "Скопійовано"
                     btn.classList.add('copied');
                     btn.innerHTML = '<span>✓ Скопійовано!</span>';
-
                     setTimeout(() => {
                         btn.classList.remove('copied');
                         btn.innerHTML = originalHTML;
-                        // Перезастосувати переклад після скидання
                         applyLanguage(currentLang);
                     }, 1500);
                 }).catch(err => {
@@ -1356,9 +1216,7 @@
             });
         });
 
-        // ==========================================
-        // 5. Scroll reveal (Intersection Observer)
-        // ==========================================
+        // 5. Scroll reveal
         const revealObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -1367,63 +1225,34 @@
                 }
             });
         }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-        document.querySelectorAll('.reveal').forEach(el => {
-            revealObserver.observe(el);
-        });
-
-        // ==========================================
         // 6. FAQ accordion
-        // ==========================================
         document.querySelectorAll('.faq-item').forEach(item => {
             item.querySelector('.faq-question').addEventListener('click', () => {
                 const isOpen = item.classList.contains('open');
-
-                // Закрити всі
                 document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-
-                // Відкрити поточний якщо був закритий
                 if (!isOpen) item.classList.add('open');
             });
         });
 
-        // ==========================================
         // 7. Language switcher
-        // ==========================================
         let currentLang = 'ua';
         const langSwitch = document.getElementById('langSwitch');
-
         function applyLanguage(lang) {
             currentLang = lang;
             langSwitch.classList.toggle('en', lang === 'en');
-
-            // Активна кнопка
             langSwitch.querySelectorAll('button').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
-
-            // Всі елементи з data-ua / data-en
             document.querySelectorAll('[data-ua]').forEach(el => {
                 const text = el.dataset[lang];
                 if (text) el.textContent = text;
             });
-
-            // Оновлюємо title
-            document.title = lang === 'en'
-                ? 'Roblox Scripts Collection'
-                : 'Roblox Scripts Collection';
         }
-
         langSwitch.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                applyLanguage(btn.dataset.lang);
-            });
+            btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
         });
-
-        // ==========================================
-        // 8. Пульсація hero badge (для ефекту "живості")
-        // ==========================================
-        // вже реалізовано через CSS
     </script>
 </body>
 </html>
