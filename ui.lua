@@ -1,5 +1,6 @@
 --// ╔══════════════════════════════════════════════════════════════╗
---// ║  ProjectX UI — Animated Edition (Shahed + Rocket)            ║
+--// ║  ProjectX UI — Animated Edition                              ║
+--// ║  Smooth animations • Full English • Modern design             ║
 --// ╚══════════════════════════════════════════════════════════════╝
 
 local TweenService     = game:GetService("TweenService")
@@ -214,7 +215,8 @@ local function createSlider(parent, text, min, max, default, callback)
     Fill.BorderSizePixel = 0
     Fill.Parent = Bar
     corner(Fill, 999)
-    gradient(Fill, Theme.Accent, Color3.fromRGB(180, 200, 255), 0)
+
+    local FillGrad = gradient(Fill, Theme.Accent, Color3.fromRGB(180, 200, 255), 0)
 
     local Knob = Instance.new("Frame")
     Knob.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -295,6 +297,7 @@ local function createSection(parent, text)
         NumberSequenceKeypoint.new(1, 1),
     })
     LineGrad.Parent = Line
+
     return Lbl
 end
 
@@ -314,14 +317,18 @@ local function createActionButton(parent, text, color, callback)
     Btn.Parent = parent
     corner(Btn, 10)
 
-    gradient(Btn, color, Color3.fromRGB(
+    local grad = gradient(Btn, color, Color3.fromRGB(
         math.min(255, color.R * 255 + 60),
         math.min(255, color.G * 255 + 60),
         math.min(255, color.B * 255 + 60)
     ), 45)
 
-    Btn.MouseEnter:Connect(function() tw(Btn, Ease.Smooth, { Size = UDim2.new(1, -16, 0, 52) }) end)
-    Btn.MouseLeave:Connect(function() tw(Btn, Ease.Smooth, { Size = UDim2.new(1, -16, 0, 48) }) end)
+    Btn.MouseEnter:Connect(function()
+        tw(Btn, Ease.Smooth, { Size = UDim2.new(1, -16, 0, 52) })
+    end)
+    Btn.MouseLeave:Connect(function()
+        tw(Btn, Ease.Smooth, { Size = UDim2.new(1, -16, 0, 48) })
+    end)
     Btn.MouseButton1Click:Connect(function()
         createRipple(Btn, Mouse.X - Btn.AbsolutePosition.X, Mouse.Y - Btn.AbsolutePosition.Y)
         Btn.TextSize = 12
@@ -438,7 +445,8 @@ function UI:init(Features)
     FloatingBtn.Parent = ScreenGui
     corner(FloatingBtn, 999)
     stroke(FloatingBtn, Color3.fromRGB(255, 255, 255), 2, 0.6)
-    gradient(FloatingBtn, Theme.Accent, Color3.fromRGB(180, 120, 255), 45)
+
+    local FloatGrad = gradient(FloatingBtn, Theme.Accent, Color3.fromRGB(180, 120, 255), 45)
 
     local FloatIcon = Instance.new("TextLabel")
     FloatIcon.Size = UDim2.new(1, 0, 1, 0)
@@ -458,8 +466,12 @@ function UI:init(Features)
         end
     end)
 
-    FloatingBtn.MouseEnter:Connect(function() tw(FloatingBtn, Ease.Bounce, { Size = UDim2.new(0, 62, 0, 62) }) end)
-    FloatingBtn.MouseLeave:Connect(function() tw(FloatingBtn, Ease.Smooth, { Size = UDim2.new(0, 56, 0, 56) }) end)
+    FloatingBtn.MouseEnter:Connect(function()
+        tw(FloatingBtn, Ease.Bounce, { Size = UDim2.new(0, 62, 0, 62) })
+    end)
+    FloatingBtn.MouseLeave:Connect(function()
+        tw(FloatingBtn, Ease.Smooth, { Size = UDim2.new(0, 56, 0, 56) })
+    end)
 
     -- Main Window
     local Main = Instance.new("Frame")
@@ -474,7 +486,8 @@ function UI:init(Features)
     Main.Parent = ScreenGui
     corner(Main, 16)
     stroke(Main, Theme.Stroke, 1.5, 0.3)
-    gradient(Main, Color3.fromRGB(28, 28, 40), Color3.fromRGB(14, 14, 20), 135)
+
+    local MainGrad = gradient(Main, Color3.fromRGB(28, 28, 40), Color3.fromRGB(14, 14, 20), 135)
 
     -- Header
     local Header = Instance.new("Frame")
@@ -500,7 +513,8 @@ function UI:init(Features)
     Logo.BorderSizePixel = 0
     Logo.Parent = Header
     corner(Logo, 8)
-    gradient(Logo, Theme.Accent, Color3.fromRGB(180, 120, 255), 45)
+
+    local LogoGrad = gradient(Logo, Theme.Accent, Color3.fromRGB(180, 120, 255), 45)
 
     local LogoText = Instance.new("TextLabel")
     LogoText.Size = UDim2.new(1, 0, 1, 0)
@@ -526,7 +540,7 @@ function UI:init(Features)
     VersionLbl.Size = UDim2.new(0, 60, 1, 0)
     VersionLbl.Position = UDim2.new(1, -100, 0, 0)
     VersionLbl.BackgroundTransparency = 1
-    VersionLbl.Text = "v2.0"
+    VersionLbl.Text = "v1.0"
     VersionLbl.TextColor3 = Theme.TextDim
     VersionLbl.Font = Enum.Font.Gotham
     VersionLbl.TextSize = 11
@@ -546,8 +560,12 @@ function UI:init(Features)
     CloseBtn.Parent = Header
     corner(CloseBtn, 8)
 
-    CloseBtn.MouseEnter:Connect(function() tw(CloseBtn, Ease.Fast, { BackgroundColor3 = Theme.Danger }) end)
-    CloseBtn.MouseLeave:Connect(function() tw(CloseBtn, Ease.Fast, { BackgroundColor3 = Theme.Element }) end)
+    CloseBtn.MouseEnter:Connect(function()
+        tw(CloseBtn, Ease.Fast, { BackgroundColor3 = Theme.Danger })
+    end)
+    CloseBtn.MouseLeave:Connect(function()
+        tw(CloseBtn, Ease.Fast, { BackgroundColor3 = Theme.Element })
+    end)
 
     -- Tab Bar
     local TabBar = Instance.new("Frame")
@@ -693,6 +711,7 @@ function UI:init(Features)
     -- MOVEMENT TAB
     -- ==================================================
     createSection(MovePage, "Speed")
+
     createToggle(MovePage, "Enable Speed", false, function(v)
         if Features.Movement then Features.Movement:setSpeed(v) end
     end)
@@ -703,6 +722,7 @@ function UI:init(Features)
     end)
 
     createSection(MovePage, "Fly")
+
     createToggle(MovePage, "Enable Fly", false, function(v)
         if Features.Movement then Features.Movement:setFly(v) end
     end)
@@ -713,12 +733,13 @@ function UI:init(Features)
     end)
 
     createSection(MovePage, "Noclip")
+
     createToggle(MovePage, "Enable Noclip", false, function(v)
         if Features.Movement then Features.Movement:setNoclip(v) end
     end)
 
     --// --- SHAHED & ROCKET SECTION ---
-    createSection(MovePage, "Kamikaze Drones")
+    createSection(MovePage, "Shahed & Rocket")
 
     createToggle(MovePage, "Enable Shahed (Key: G)", false, function(v)
         if Features.Shahed and Features.Shahed.setEnabled then
@@ -731,29 +752,10 @@ function UI:init(Features)
             Features.Rocket:setEnabled(v)
         end
     end)
-
-    local shahedInfoFrame = Instance.new("Frame")
-    shahedInfoFrame.Size = UDim2.new(1, -16, 0, 42)
-    shahedInfoFrame.BackgroundColor3 = Theme.Element
-    shahedInfoFrame.BorderSizePixel = 0
-    shahedInfoFrame.Parent = MovePage
-    corner(shahedInfoFrame, 10)
-
-    local shahedInfoText = Instance.new("TextLabel")
-    shahedInfoText.Size = UDim2.new(1, -20, 1, 0)
-    shahedInfoText.Position = UDim2.new(0, 10, 0, 0)
-    shahedInfoText.BackgroundTransparency = 1
-    shahedInfoText.Text = "Увімкни тогл, потім натисни G (Шахед) або H (Ракета)."
-    shahedInfoText.TextColor3 = Theme.TextDim
-    shahedInfoText.Font = Enum.Font.Gotham
-    shahedInfoText.TextSize = 11
-    shahedInfoText.TextXAlignment = Enum.TextXAlignment.Left
-    shahedInfoText.TextYAlignment = Enum.TextYAlignment.Center
-    shahedInfoText.Parent = shahedInfoFrame
     --// ----------------------------
 
     -- ==================================================
-    -- FLING TAB
+    -- FLING TAB (list only)
     -- ==================================================
     createSection(FlingPage, "Players — Click to Fling")
 
@@ -902,6 +904,7 @@ function UI:init(Features)
     end
 
     createSection(AnimPage, "Controls")
+
     createActionButton(AnimPage, "RESET ANIMATIONS", Theme.Danger, function()
         if Features.Animation then
             Features.Animation:reset()
