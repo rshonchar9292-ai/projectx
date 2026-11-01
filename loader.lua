@@ -85,7 +85,6 @@ local Features = {
     Movement  = loadModule("features.movement"),
     Fling     = loadModule("features.fling"),
     Animation = loadModule("features.animation"),
-    Shahed    = loadModule("features.shahed"), -- ДОДАНО SHAHED
 }
 
 --// ============================================================
@@ -95,7 +94,6 @@ log("─────────────────────────
 log("Movement: "  .. type(Features.Movement))
 log("Fling: "     .. type(Features.Fling))
 log("Animation: " .. type(Features.Animation))
-log("Shahed: "    .. type(Features.Shahed))
 log("─────────────────────────────")
 
 _G.ProjectXFeatures = Features
