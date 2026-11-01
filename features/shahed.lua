@@ -1,6 +1,6 @@
 --// ============================================================
 --// features/shahed.lua
---// Shahed-136 (Geran) High Detail Edition - Spinning Propeller
+--// Shahed-136 (Geran) - Stable Flight & Spinning Propeller
 --// ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -71,32 +71,35 @@ local function createShahedModel()
     tailFin.Material = Enum.Material.Metal
     tailFin.Parent = model
 
-    -- 6. ДВИГУН (Тепер довший, щоб тримати пропелер)
+    -- 6. ДВИГУН
     local engine = Instance.new("Part")
     engine.Name = "Engine"
     engine.Shape = Enum.PartType.Cylinder
-    engine.Size = Vector3.new(2, 1, 1) -- X - довжина циліндра
+    engine.Size = Vector3.new(2, 1, 1)
     engine.Color = Color3.fromRGB(30, 30, 30)
     engine.Material = Enum.Material.Metal
     engine.Parent = model
 
-    -- 7. ХАБ ПРОПЕЛЕРА (Окрема деталь, не приварена)
+    -- 7. ХАБ ПРОПЕЛЕРА (Робимо невагомим, щоб не крутив ракету)
     local propellerHub = Instance.new("Part")
     propellerHub.Name = "PropellerHub"
     propellerHub.Shape = Enum.PartType.Cylinder
     propellerHub.Size = Vector3.new(0.5, 0.5, 0.5)
     propellerHub.Color = Color3.fromRGB(20, 20, 20)
     propellerHub.Material = Enum.Material.Metal
+    propellerHub.Massless = true -- <-- ВАЖЛИВО
     propellerHub.Parent = model
 
-    -- ЛОПАТІ (Приварені до хаба)
+    -- ЛОПАТІ (Також невагомі)
     local blade1 = Instance.new("Part")
     blade1.Size = Vector3.new(0.1, 3, 0.3)
     blade1.Color = Color3.fromRGB(40, 40, 40)
     blade1.Material = Enum.Material.Metal
+    blade1.Massless = true
     blade1.Parent = model
 
     local blade2 = blade1:Clone()
+    blade2.Massless = true
     blade2.Parent = model
 
     -- ЧЕРВОНА СМУГА
@@ -116,12 +119,10 @@ local function createShahedModel()
     tailFin.CFrame = hitbox.CFrame * CFrame.new(0, 0.8, 2.5)
     warningStripe.CFrame = hitbox.CFrame * CFrame.new(0, 0.8, -1.5)
 
-    -- Двигун повертаємо так, щоб він дивився назад
     engine.CFrame = hitbox.CFrame * CFrame.new(0, 0, 2.5) * CFrame.Angles(0, math.rad(90), 0)
-    -- Пропелер ставимо в кінець двигуна
-    propellerHub.CFrame = engine.CFrame * CFrame.new(1, 0, 0)
     
-    -- Лопаті ставимо на хаб
+    -- Пропелер ставимо ззаду
+    propellerHub.CFrame = engine.CFrame * CFrame.new(1, 0, 0)
     blade1.CFrame = propellerHub.CFrame * CFrame.new(0, 1.5, 0)
     blade2.CFrame = propellerHub.CFrame * CFrame.new(0, -1.5, 0)
 
@@ -148,13 +149,12 @@ local function createShahedModel()
     weldB2.Parent = blade2
 
     -- ==========================================
-    -- МАГІЯ: HINGE CONSTRAINT (Фізична петля)
+    -- ФІЗИЧНА ПЕТЛЯ (Hinge)
     -- ==========================================
-    -- Створюємо кріплення на двигуні (ззаду) та на пропелері
     local att0 = Instance.new("Attachment")
     att0.Parent = engine
-    att0.Position = Vector3.new(1, 0, 0) -- Кінець двигуна
-    att0.Axis = Vector3.new(1, 0, 0)     -- Вісь обертання
+    att0.Position = Vector3.new(1, 0, 0)
+    att0.Axis = Vector3.new(1, 0, 0)
 
     local att1 = Instance.new("Attachment")
     att1.Parent = propellerHub
@@ -166,11 +166,11 @@ local function createShahedModel()
     hinge.Attachment1 = att1
     hinge.Parent = engine
     hinge.ActuatorType = Enum.ActuatorType.Motor
-    hinge.AngularVelocity = 100 -- Швидкість обертання
-    hinge.MotorMaxTorque = math.huge -- Сила, щоб ніщо не зупиняло
+    hinge.AngularVelocity = 500 -- Швидке обертання
+    hinge.MotorMaxTorque = math.huge
 
     -- ==========================================
-    -- ЕФЕКТИ
+    -- ЕФЕКТИ (Дим та полум'я)
     -- ==========================================
     local smoke = Instance.new("ParticleEmitter")
     smoke.Texture = "rbxassetid://243098098"
@@ -220,16 +220,16 @@ local function spawnShahed()
 
     local hitbox = model.PrimaryPart
     
-    -- НАДПОТУЖНИЙ ГІРОСКОП (щоб ракета летіла рівно, поки пропелер крутиться)
+    -- ГІРОСКОП (Прив'язаний до камери, щоб не було крену)
     local gyro = Instance.new("BodyGyro")
     gyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-    gyro.P = 10000
-    gyro.D = 1000
+    gyro.P = 100000
+    gyro.D = 5000
+    gyro.CFrame = Camera.CFrame
     gyro.Parent = hitbox
 
     log("✅ Дрон у повітрі. Камера перемикається...")
 
-    -- ПЕРЕМИКАННЯ КАМЕРИ
     local originalSubject = Camera.CameraSubject
     Camera.CameraSubject = hitbox
     LocalPlayer.CameraMaxZoomDistance = 30
@@ -251,12 +251,11 @@ local function spawnShahed()
             local lookDir = Camera.CFrame.LookVector
             -- Рух вперед
             hitbox.AssemblyLinearVelocity = lookDir * CONFIG.Speed
-            -- Стабілізація
-            gyro.CFrame = CFrame.lookAt(hitbox.Position, hitbox.Position + lookDir)
+            -- Блокуємо всі осі обертання (включно з креном)
+            gyro.CFrame = Camera.CFrame
         end
     end)
 
-    -- ВІДНОВЛЕННЯ КАМЕРИ
     model.Destroying:Connect(function()
         if moveConn then moveConn:Disconnect() end
         if Camera then
@@ -270,7 +269,6 @@ local function spawnShahed()
         log("Камеру повернено гравцю.")
     end)
 
-    -- КОЛІЗІЯ
     hitbox.Touched:Connect(function(hit)
         local char = hit:FindFirstAncestorOfClass("Model")
         if char and char ~= model and char ~= Char then
@@ -321,5 +319,5 @@ function ShahedModule:setEnabled(state)
     log("Статус Shahed: " .. tostring(state))
 end
 
-log("Shahed-136 (Spinning Propeller) завантажено.")
+log("Shahed-136 (Stable & Spinning) завантажено.")
 return ShahedModule
