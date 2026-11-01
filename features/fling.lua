@@ -657,7 +657,6 @@ local function setFPDProtection(state)
     if state then
         workspace.FallenPartsDestroyHeight = 0/0
 
-        -- Спроба захукати __newindex
         pcall(function()
             local mt = getrawmetatable(workspace)
             oldNewIndex = mt.__newindex
@@ -805,6 +804,6 @@ log("TrustHub Fling FULL EDITION loaded")
 log("Methods: 1=SkidFling  2=shhhlol  3=yeet")
 log("═══════════════════════════════════")
 
---// ЗБЕРЕЖЕННЯ ДЛЯ SHAHED
+--// ЗБЕРЕЖЕННЯ У ГЛОБАЛЬНУ ЗМІННУ ДЛЯ SHAHED.LUA
 _G.FotliFling = Fling.new()
 return _G.FotliFling
