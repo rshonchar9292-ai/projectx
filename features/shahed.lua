@@ -1,6 +1,6 @@
 --// ============================================================
 --// features/shahed.lua
---// Shahed-136 (Geran) High Detail Edition
+--// Shahed-136 (Geran) High Detail Edition - Stable Flight
 --// ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -20,7 +20,6 @@ local lastSpawnTime = 0
 local isDroneActive = false
 
 local function log(msg) print("[Shahed] " .. msg) end
-local function logErr(msg) warn("[Shahed ERROR] " .. msg) end
 
 --// ============================================================
 --// ФУНКЦІЯ СТВОРЕННЯ ДЕТАЛІЗОВАНОЇ МОДЕЛІ
@@ -29,7 +28,7 @@ local function createShahedModel()
     local model = Instance.new("Model")
     model.Name = "Shahed136"
 
-    -- 1. ГОЛОВНИЙ ХІТБОКС (невидимий, для колізій)
+    -- 1. ГОЛОВНИЙ ХІТБОКС
     local hitbox = Instance.new("Part")
     hitbox.Name = "Hitbox"
     hitbox.Size = Vector3.new(6, 2, 9)
@@ -38,57 +37,50 @@ local function createShahedModel()
     hitbox.Parent = model
     model.PrimaryPart = hitbox
 
-    -- 2. ФЮЗЕЛЯЖ (Корпус)
+    -- 2. ФЮЗЕЛЯЖ
     local body = Instance.new("Part")
-    body.Name = "Body"
     body.Size = Vector3.new(1.5, 1.5, 5)
-    body.Color = Color3.fromRGB(70, 75, 65) -- Військовий сіро-зелений
+    body.Color = Color3.fromRGB(70, 75, 65)
     body.Material = Enum.Material.Metal
     body.Parent = model
 
-    -- 3. НІС (Боєголовка / Сенсор)
+    -- 3. НІС
     local nose = Instance.new("Part")
-    nose.Name = "Nose"
     nose.Size = Vector3.new(1.5, 1.5, 2)
     nose.Color = Color3.fromRGB(40, 40, 40)
     nose.Material = Enum.Material.DiamondPlate
     nose.Parent = model
 
-    -- 4. КРИЛА (Дельтаподібні, використовуємо клини)
+    -- 4. КРИЛА (Дельтаподібні)
     local wingLeft = Instance.new("WedgePart")
-    wingLeft.Name = "WingLeft"
     wingLeft.Size = Vector3.new(6, 0.2, 3)
     wingLeft.Color = Color3.fromRGB(80, 85, 75)
     wingLeft.Material = Enum.Material.Metal
     wingLeft.Parent = model
 
     local wingRight = Instance.new("WedgePart")
-    wingRight.Name = "WingRight"
     wingRight.Size = Vector3.new(6, 0.2, 3)
     wingRight.Color = Color3.fromRGB(80, 85, 75)
     wingRight.Material = Enum.Material.Metal
     wingRight.Parent = model
 
-    -- 5. ХВОСТОВЕ ОПЕРЕННЯ (Стабілізатори)
+    -- 5. ХВОСТОВЕ ОПЕРЕННЯ
     local tailFin = Instance.new("Part")
-    tailFin.Name = "TailFin"
     tailFin.Size = Vector3.new(0.2, 2, 1.5)
     tailFin.Color = Color3.fromRGB(60, 65, 55)
     tailFin.Material = Enum.Material.Metal
     tailFin.Parent = model
 
-    -- 6. ДВИГУН (Задня частина)
+    -- 6. ДВИГУН
     local engine = Instance.new("Part")
-    engine.Name = "Engine"
     engine.Shape = Enum.PartType.Cylinder
     engine.Size = Vector3.new(1, 1, 1)
     engine.Color = Color3.fromRGB(30, 30, 30)
     engine.Material = Enum.Material.Metal
     engine.Parent = model
 
-    -- 7. ПРОПЕЛЕР (Гвинт)
+    -- 7. ПРОПЕЛЕР (Тепер статичний)
     local propellerHub = Instance.new("Part")
-    propellerHub.Name = "PropellerHub"
     propellerHub.Shape = Enum.PartType.Cylinder
     propellerHub.Size = Vector3.new(0.5, 0.5, 0.5)
     propellerHub.Color = Color3.fromRGB(20, 20, 20)
@@ -96,30 +88,22 @@ local function createShahedModel()
     propellerHub.Parent = model
 
     local blade1 = Instance.new("Part")
-    blade1.Name = "Blade1"
     blade1.Size = Vector3.new(0.1, 3, 0.3)
     blade1.Color = Color3.fromRGB(40, 40, 40)
     blade1.Material = Enum.Material.Metal
     blade1.Parent = propellerHub
 
     local blade2 = blade1:Clone()
-    blade2.Name = "Blade2"
-    blade2.Size = Vector3.new(0.1, 3, 0.3)
     blade2.Parent = propellerHub
 
-    -- Фарбуємо крила в червоний (як мішень)
+    -- ЧЕРВОНА СМУГА
     local warningStripe = Instance.new("Part")
-    warningStripe.Name = "WarningStripe"
     warningStripe.Size = Vector3.new(1.6, 0.1, 0.5)
     warningStripe.Color = Color3.fromRGB(200, 30, 30)
     warningStripe.Material = Enum.Material.Neon
     warningStripe.Parent = model
 
-    -- ==========================================
-    -- ЗБІРКА МОДЕЛІ (Розміщення частин)
-    -- ==========================================
-    
-    -- Ставимо все відносно Хітбокса
+    -- ЗБІРКА
     body.CFrame = hitbox.CFrame
     nose.CFrame = hitbox.CFrame * CFrame.new(0, 0, -3.5)
     wingLeft.CFrame = hitbox.CFrame * CFrame.new(-2.5, 0, 0.5) * CFrame.Angles(0, math.rad(20), 0)
@@ -128,16 +112,13 @@ local function createShahedModel()
     engine.CFrame = hitbox.CFrame * CFrame.new(0, 0, 2.5) * CFrame.Angles(0, 0, math.rad(90))
     warningStripe.CFrame = hitbox.CFrame * CFrame.new(0, 0.8, -1.5)
 
-    -- Пропелер ззаду
     local propCFrame = hitbox.CFrame * CFrame.new(0, 0, 3.2)
     propellerHub.CFrame = propCFrame * CFrame.Angles(0, 0, math.rad(90))
     blade1.CFrame = propCFrame * CFrame.Angles(0, 0, math.rad(90)) * CFrame.new(0, 1.5, 0)
     blade2.CFrame = propCFrame * CFrame.Angles(0, 0, math.rad(90)) * CFrame.new(0, -1.5, 0)
 
-    -- ==========================================
-    -- ЗВАРЮВАННЯ (WeldConstraint)
-    -- ==========================================
-    local partsToWeld = {body, nose, wingLeft, wingRight, tailFin, engine, warningStripe}
+    -- ЗВАРЮВАННЯ
+    local partsToWeld = {body, nose, wingLeft, wingRight, tailFin, engine, warningStripe, propellerHub}
     for _, part in ipairs(partsToWeld) do
         local weld = Instance.new("WeldConstraint")
         weld.Part0 = hitbox
@@ -145,13 +126,6 @@ local function createShahedModel()
         weld.Parent = part
     end
 
-    -- Пропелер чіпляємо до хаба
-    local weldHub = Instance.new("WeldConstraint")
-    weldHub.Part0 = hitbox
-    weldHub.Part1 = propellerHub
-    weldHub.Parent = propellerHub
-
-    -- Лопаті чіпляємо до хаба
     local weldB1 = Instance.new("WeldConstraint")
     weldB1.Part0 = propellerHub
     weldB1.Part1 = blade1
@@ -162,11 +136,9 @@ local function createShahedModel()
     weldB2.Part1 = blade2
     weldB2.Parent = blade2
 
-    -- ==========================================
-    -- ЕФЕКТИ (Дим та вогонь)
-    -- ==========================================
+    -- ЕФЕКТИ
     local smoke = Instance.new("ParticleEmitter")
-    smoke.Texture = "rbxassetid://243098098" -- Стандартна текстура диму
+    smoke.Texture = "rbxassetid://243098098"
     smoke.Color = ColorSequence.new(Color3.fromRGB(150, 150, 150), Color3.fromRGB(50, 50, 50))
     smoke.Size = NumberSequence.new(1, 5)
     smoke.Transparency = NumberSequence.new(0.5, 1)
@@ -185,21 +157,15 @@ local function createShahedModel()
     fire.Speed = NumberRange.new(1, 5)
     fire.Parent = engine
 
-    return model, propellerHub
+    return model
 end
 
 --// ============================================================
---// ЛОГІКА ЗАПУСКУ
+--// ЛОГІКА ЗАПУСКУ (ВИПРАВЛЕНО ВІД КРУЧЕННЯ)
 --// ============================================================
 local function spawnShahed()
-    if isDroneActive then
-        log("Дрон вже в повітрі!")
-        return
-    end
-    if tick() - lastSpawnTime < CONFIG.Cooldown then
-        log("⏳ Кулдаун! Зачекай.")
-        return
-    end
+    if isDroneActive then return end
+    if tick() - lastSpawnTime < CONFIG.Cooldown then return end
     lastSpawnTime = tick()
     isDroneActive = true
 
@@ -213,16 +179,17 @@ local function spawnShahed()
     local spawnCFrame = Camera.CFrame * CFrame.new(0, 0, -CONFIG.SpawnDistance)
     log("🚀 Запуск Shahed-136...")
 
-    local model, propHub = createShahedModel()
+    local model = createShahedModel()
     model:PivotTo(spawnCFrame)
     model.Parent = workspace
 
-    -- Гіроскоп для плавних поворотів
     local hitbox = model.PrimaryPart
+    
+    -- НАДПОТУЖНИЙ ГІРОСКОП (щоб дрон летів рівно і не крутився)
     local gyro = Instance.new("BodyGyro")
-    gyro.MaxTorque = Vector3.new(40000, 40000, 40000)
-    gyro.P = 5000
-    gyro.D = 500
+    gyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+    gyro.P = 10000
+    gyro.D = 1000
     gyro.Parent = hitbox
 
     log("✅ Дрон у повітрі. Камера перемикається...")
@@ -234,15 +201,13 @@ local function spawnShahed()
 
     local startTime = tick()
     local moveConn
-    local propellerAngle = 0
     
-    moveConn = RunService.Heartbeat:Connect(function(dt)
+    moveConn = RunService.Heartbeat:Connect(function()
         if not model.Parent then
             moveConn:Disconnect()
             return
         end
         if tick() - startTime > CONFIG.Lifetime then
-            log("Час вийшов. Дрон самоліквідувався.")
             model:Destroy()
             return
         end
@@ -253,14 +218,8 @@ local function spawnShahed()
             -- Рух вперед
             hitbox.AssemblyLinearVelocity = lookDir * CONFIG.Speed
             
-            -- Поворот носа
+            -- Стабілізація напрямку носа
             gyro.CFrame = CFrame.lookAt(hitbox.Position, hitbox.Position + lookDir)
-
-            -- Анімація пропелера (крутимо лопаті)
-            if propHub and propHub.Parent then
-                propellerAngle = propellerAngle + (dt * 2000) -- Швидкість обертання
-                propHub.CFrame = propHub.CFrame * CFrame.Angles(0, 0, math.rad(propellerAngle))
-            end
         end
     end)
 
@@ -298,7 +257,6 @@ local function spawnShahed()
                     end
                 end
 
-                -- Вибух
                 local explosion = Instance.new("Explosion")
                 explosion.Position = hitbox.Position
                 explosion.BlastRadius = 8
@@ -330,5 +288,5 @@ function ShahedModule:setEnabled(state)
     log("Статус Shahed: " .. tostring(state))
 end
 
-log("Shahed-136 (High Detail) завантажено.")
+log("Shahed-136 (High Detail & Stable) завантажено.")
 return ShahedModule
