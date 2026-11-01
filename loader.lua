@@ -1,116 +1,104 @@
---// ╔══════════════════════════════════════════════════════════════╗
---// ║  ProjectX - Loader v1.0                                      ║
---// ╚══════════════════════════════════════════════════════════════╝
-
-local BASE_URL = "https://raw.githubusercontent.com/rshonchar9292-ai/projectx/main/"
-
 --// ============================================================
---//  LOG HELPERS
+--// LOADER для TrustHub / ProjectX
+--// Завантажує UI та всі модулі з папки features/
 --// ============================================================
-local function log(msg)
-    print("[ProjectX] " .. tostring(msg))
+
+if _G.FotliMenuLoaded then
+    warn("[FotliMenu] Вже завантажено!")
+    return
 end
+_G.FotliMenuLoaded = true
 
-local function notify(title, text, duration)
-    pcall(function()
-        game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = title,
-            Text = text,
-            Duration = duration or 5,
-        })
-    end)
-end
+--// Базовий URL твого репозиторію (перевір, що юзернейм 9292)
+local BASE = "https://raw.githubusercontent.com/rshonchar9292-ai/fotli-hub/main/"
 
---// ============================================================
---//  MODULE LOADER (крапки → слеші)
---// ============================================================
-local function loadModule(path)
-    local urlPath = path:gsub("%.", "/")
-    local url = BASE_URL .. urlPath .. ".lua"
-
-    log("Завантажую: " .. urlPath)
-
+--// Універсальна функція завантаження
+local function Load(path)
+    local url = BASE .. path .. "?t=" .. tostring(os.time()) -- Обхід кешу
     local ok, code = pcall(function()
         return game:HttpGet(url)
     end)
 
     if not ok then
-        log("❌ HTTP FAIL: " .. urlPath)
-        return nil
+        warn("[FotliMenu] HTTP-помилка (" .. path .. "):", code)
+        return false
     end
 
-    if not code or #code < 10 then
-        log("❌ ПУСТИЙ КОД: " .. urlPath)
-        return nil
+    if not code or #code < 20 then
+        warn("[FotliMenu] Порожня відповідь (" .. path .. ")")
+        return false
     end
 
-    if code:find("404: Not Found") then
-        log("❌ 404: " .. urlPath)
-        return nil
+    --// Перевірка на 404
+    if code:sub(1, 3) == "404" or code:find("^404:") then
+        warn("[FotliMenu] Файл не знайдено (" .. path .. ")")
+        return false
     end
 
+    --// Компіляція
     local fn, err = loadstring(code)
     if not fn then
-        log("❌ COMPILE FAIL: " .. urlPath .. " → " .. tostring(err))
-        return nil
+        warn("[FotliMenu] Помилка компіляції (" .. path .. "):", err)
+        return false
     end
 
-    local ok2, result = pcall(fn)
-    if not ok2 then
-        log("❌ RUN FAIL: " .. urlPath .. " → " .. tostring(result))
-        return nil
+    --// Виконання
+    local runOk, runErr = pcall(fn)
+    if not runOk then
+        warn("[FotliMenu] Помилка виконання (" .. path .. "):", runErr)
+        return false
     end
 
-    log("✅ OK: " .. urlPath .. " → " .. type(result))
-    return result
+    print("[FotliMenu] ✓ " .. path)
+    return true
 end
 
 --// ============================================================
---//  LOAD UI
+--// 1. Завантаження UI
 --// ============================================================
-log("=== СТАРТ ===")
+print("[FotliMenu] Завантаження UI...")
+Load("ui.lua")
 
-local UI = loadModule("ui")
-if not UI then
-    log("❌ UI НЕ ЗАВАНТАЖЕНО — стоп")
-    notify("ProjectX", "UI не завантажено. Перевір консоль.", 10)
-    return
+--// ============================================================
+--// 2. Очікування ініціалізації UI
+--// ============================================================
+local tries = 0
+while (not _G.ModMenu or not _G.ModMenu.Elements) and tries < 30 do
+    task.wait(0.1)
+    tries = tries + 1
 end
-log("✅ UI OK")
 
---// ============================================================
---//  LOAD ALL FEATURES
---// ============================================================
-local Features = {
-    Movement  = loadModule("features.movement"),
-    Fling     = loadModule("features.fling"),
-    Animation = loadModule("features.animation"),
-}
-
---// ============================================================
---//  LOG FEATURES STATUS
---// ============================================================
-log("─────────────────────────────")
-log("Movement: "  .. type(Features.Movement))
-log("Fling: "     .. type(Features.Fling))
-log("Animation: " .. type(Features.Animation))
-log("─────────────────────────────")
-
-_G.ProjectXFeatures = Features
-
---// ============================================================
---//  INIT UI
---// ============================================================
-local ok, err = pcall(function()
-    UI:init(Features)
-end)
-
-if not ok then
-    log("❌ UI INIT FAIL: " .. tostring(err))
-    notify("ProjectX Error", "UI init: " .. tostring(err), 15)
+if not _G.ModMenu or not _G.ModMenu.Elements then
+    warn("[FotliMenu] UI не ініціалізувався — модулі не запущено")
     return
 end
 
-log("✅ UI INIT OK")
-log("=== ГОТОВО ===")
-notify("ProjectX", "Завантажено! F4 — меню", 5)
+print("[FotliMenu] UI готовий, завантаження модулів...")
+
+--// ============================================================
+--// 3. Завантаження модулів (Features)
+--// ============================================================
+
+--// Combat
+Load("features/aimbot.lua")
+Load("features/silentaim.lua")
+
+--// Visuals
+Load("features/esp.lua")
+Load("features/orbitals.lua")
+
+--// Movement
+Load("features/fly.lua")
+Load("features/bunnyhop.lua")
+Load("features/fov.lua")
+
+--// Rage / Fun
+Load("features/antiaim.lua")
+Load("features/shahed.lua")
+Load("features/fling.lua")
+
+--// ============================================================
+--// 4. Готово
+--// ============================================================
+print("[FotliMenu] Готово! Меню запущено.")
+print("[FotliMenu] Натисни F4 щоб відкрити меню.")
