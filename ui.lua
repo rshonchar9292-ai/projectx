@@ -1,6 +1,5 @@
 --// ╔══════════════════════════════════════════════════════════════╗
---// ║  ProjectX UI — Animated Edition                              ║
---// ║  Smooth animations • Full English • Modern design             ║
+--// ║  ProjectX UI — Animated Edition (Final)                      ║
 --// ╚══════════════════════════════════════════════════════════════╝
 
 local TweenService     = game:GetService("TweenService")
@@ -23,27 +22,18 @@ local Theme = {
     Element    = Color3.fromRGB(35, 35, 46),
     ElementHov = Color3.fromRGB(45, 45, 58),
     Accent     = Color3.fromRGB(130, 150, 255),
-    AccentDark = Color3.fromRGB(90, 110, 220),
     Success    = Color3.fromRGB(85, 220, 130),
     Danger     = Color3.fromRGB(240, 80, 95),
-    Murderer   = Color3.fromRGB(255, 60, 60),
-    Sheriff    = Color3.fromRGB(60, 150, 255),
-    Innocent   = Color3.fromRGB(80, 220, 120),
     Text       = Color3.fromRGB(240, 240, 248),
     TextDim    = Color3.fromRGB(140, 140, 160),
     Stroke     = Color3.fromRGB(55, 55, 75),
-    Shadow     = Color3.fromRGB(0, 0, 0),
 }
 
---// ============================================================
---//  ANIMATION PRESETS
---// ============================================================
 local Ease = {
     Smooth    = TweenInfo.new(0.22, Enum.EasingStyle.Quad,    Enum.EasingDirection.Out),
     Fast      = TweenInfo.new(0.14, Enum.EasingStyle.Quad,    Enum.EasingDirection.Out),
     Bounce    = TweenInfo.new(0.30, Enum.EasingStyle.Back,    Enum.EasingDirection.Out),
     Elastic   = TweenInfo.new(0.35, Enum.EasingStyle.Quint,   Enum.EasingDirection.Out),
-    Slow      = TweenInfo.new(0.40, Enum.EasingStyle.Quart,   Enum.EasingDirection.Out),
     Enter     = TweenInfo.new(0.32, Enum.EasingStyle.Back,    Enum.EasingDirection.Out),
     Exit      = TweenInfo.new(0.20, Enum.EasingStyle.Quad,    Enum.EasingDirection.In),
 }
@@ -102,7 +92,7 @@ local function createRipple(parent, x, y)
 end
 
 --// ============================================================
---//  TOGGLE
+--//  UI COMPONENTS
 --// ============================================================
 local function createToggle(parent, text, default, callback)
     local Btn = Instance.new("TextButton")
@@ -145,32 +135,17 @@ local function createToggle(parent, text, default, callback)
     Btn.MouseButton1Click:Connect(function()
         createRipple(Btn, Mouse.X - Btn.AbsolutePosition.X, Mouse.Y - Btn.AbsolutePosition.Y)
         state = not state
-
-        tw(Track, Ease.Smooth, {
-            BackgroundColor3 = state and Theme.Success or Color3.fromRGB(58, 58, 74),
-        })
-        tw(Dot, Ease.Bounce, {
-            Position = state and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 3, 0.5, -8),
-        })
-        tw(Btn, Ease.Fast, {
-            BackgroundColor3 = state and Color3.fromRGB(48, 60, 80) or Theme.Element,
-        })
-
+        tw(Track, Ease.Smooth, { BackgroundColor3 = state and Theme.Success or Color3.fromRGB(58, 58, 74) })
+        tw(Dot, Ease.Bounce, { Position = state and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 3, 0.5, -8) })
+        tw(Btn, Ease.Fast, { BackgroundColor3 = state and Color3.fromRGB(48, 60, 80) or Theme.Element })
         callback(state)
     end)
 
-    Btn.MouseEnter:Connect(function()
-        if not state then tw(Btn, Ease.Fast, { BackgroundColor3 = Theme.ElementHov }) end
-    end)
-    Btn.MouseLeave:Connect(function()
-        if not state then tw(Btn, Ease.Fast, { BackgroundColor3 = Theme.Element }) end
-    end)
+    Btn.MouseEnter:Connect(function() if not state then tw(Btn, Ease.Fast, { BackgroundColor3 = Theme.ElementHov }) end end)
+    Btn.MouseLeave:Connect(function() if not state then tw(Btn, Ease.Fast, { BackgroundColor3 = Theme.Element }) end end)
     return Btn
 end
 
---// ============================================================
---//  SLIDER
---// ============================================================
 local function createSlider(parent, text, min, max, default, callback)
     local Frame = Instance.new("Frame")
     Frame.Size = UDim2.new(1, -16, 0, 56)
@@ -216,8 +191,6 @@ local function createSlider(parent, text, min, max, default, callback)
     Fill.Parent = Bar
     corner(Fill, 999)
 
-    local FillGrad = gradient(Fill, Theme.Accent, Color3.fromRGB(180, 200, 255), 0)
-
     local Knob = Instance.new("Frame")
     Knob.AnchorPoint = Vector2.new(0.5, 0.5)
     Knob.Size = UDim2.new(0, 12, 0, 12)
@@ -243,7 +216,6 @@ local function createSlider(parent, text, min, max, default, callback)
             dragging = true
             update(input)
             tw(Knob, Ease.Bounce, { Size = UDim2.new(0, 16, 0, 16) })
-            tw(Frame, Ease.Fast, { BackgroundColor3 = Theme.ElementHov })
         end
     end)
     UserInputService.InputChanged:Connect(function(input)
@@ -253,22 +225,11 @@ local function createSlider(parent, text, min, max, default, callback)
         if input.UserInputType == Enum.UserInputType.MouseButton1 and dragging then
             dragging = false
             tw(Knob, Ease.Smooth, { Size = UDim2.new(0, 12, 0, 12) })
-            tw(Frame, Ease.Fast, { BackgroundColor3 = Theme.Element })
         end
-    end)
-
-    Frame.MouseEnter:Connect(function()
-        if not dragging then tw(Frame, Ease.Fast, { BackgroundColor3 = Theme.ElementHov }) end
-    end)
-    Frame.MouseLeave:Connect(function()
-        if not dragging then tw(Frame, Ease.Fast, { BackgroundColor3 = Theme.Element }) end
     end)
     return Frame
 end
 
---// ============================================================
---//  SECTION
---// ============================================================
 local function createSection(parent, text)
     local Lbl = Instance.new("TextLabel")
     Lbl.Size = UDim2.new(1, -16, 0, 24)
@@ -288,60 +249,12 @@ local function createSection(parent, text)
     Line.Parent = Lbl
 
     local LineGrad = Instance.new("UIGradient")
-    LineGrad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Theme.Accent),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0)),
-    })
-    LineGrad.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0),
-        NumberSequenceKeypoint.new(1, 1),
-    })
+    LineGrad.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Theme.Accent), ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0)) })
+    LineGrad.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1) })
     LineGrad.Parent = Line
-
     return Lbl
 end
 
---// ============================================================
---//  ACTION BUTTON
---// ============================================================
-local function createActionButton(parent, text, color, callback)
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(1, -16, 0, 48)
-    Btn.BackgroundColor3 = color
-    Btn.Text = text
-    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Btn.Font = Enum.Font.GothamBold
-    Btn.TextSize = 14
-    Btn.BorderSizePixel = 0
-    Btn.AutoButtonColor = false
-    Btn.Parent = parent
-    corner(Btn, 10)
-
-    local grad = gradient(Btn, color, Color3.fromRGB(
-        math.min(255, color.R * 255 + 60),
-        math.min(255, color.G * 255 + 60),
-        math.min(255, color.B * 255 + 60)
-    ), 45)
-
-    Btn.MouseEnter:Connect(function()
-        tw(Btn, Ease.Smooth, { Size = UDim2.new(1, -16, 0, 52) })
-    end)
-    Btn.MouseLeave:Connect(function()
-        tw(Btn, Ease.Smooth, { Size = UDim2.new(1, -16, 0, 48) })
-    end)
-    Btn.MouseButton1Click:Connect(function()
-        createRipple(Btn, Mouse.X - Btn.AbsolutePosition.X, Mouse.Y - Btn.AbsolutePosition.Y)
-        Btn.TextSize = 12
-        task.wait(0.1)
-        Btn.TextSize = 14
-        callback()
-    end)
-    return Btn
-end
-
---// ============================================================
---//  PLAYER ROW
---// ============================================================
 local function createPlayerRow(parent, plr, role, roleColor, callback)
     local row = Instance.new("TextButton")
     row.Size = UDim2.new(1, -8, 0, 48)
@@ -360,37 +273,20 @@ local function createPlayerRow(parent, plr, role, roleColor, callback)
     stripe.Parent = row
     corner(stripe, 999)
 
-    local avatar = Instance.new("ImageLabel")
-    avatar.Size = UDim2.new(0, 34, 0, 34)
-    avatar.Position = UDim2.new(0, 12, 0.5, -17)
-    avatar.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-    avatar.BorderSizePixel = 0
-    avatar.Image = "rbxassetid://0"
-    avatar.Parent = row
-    corner(avatar, 999)
-
-    task.spawn(function()
-        local ok, thumb = pcall(function()
-            return Players:GetUserThumbnailAsync(plr.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
-        end)
-        if ok and thumb and avatar.Parent then avatar.Image = thumb end
-    end)
-
     local nameLbl = Instance.new("TextLabel")
     nameLbl.Size = UDim2.new(1, -100, 0, 18)
-    nameLbl.Position = UDim2.new(0, 54, 0, 6)
+    nameLbl.Position = UDim2.new(0, 14, 0, 6)
     nameLbl.BackgroundTransparency = 1
     nameLbl.Text = plr.Name
     nameLbl.TextColor3 = Theme.Text
     nameLbl.Font = Enum.Font.GothamBold
     nameLbl.TextSize = 12
     nameLbl.TextXAlignment = Enum.TextXAlignment.Left
-    nameLbl.TextTruncate = Enum.TextTruncate.AtEnd
     nameLbl.Parent = row
 
     local roleLbl = Instance.new("TextLabel")
     roleLbl.Size = UDim2.new(1, -100, 0, 14)
-    roleLbl.Position = UDim2.new(0, 54, 0, 24)
+    roleLbl.Position = UDim2.new(0, 14, 0, 24)
     roleLbl.BackgroundTransparency = 1
     roleLbl.Text = role
     roleLbl.TextColor3 = roleColor
@@ -399,22 +295,8 @@ local function createPlayerRow(parent, plr, role, roleColor, callback)
     roleLbl.TextXAlignment = Enum.TextXAlignment.Left
     roleLbl.Parent = row
 
-    local flingIcon = Instance.new("TextLabel")
-    flingIcon.Size = UDim2.new(0, 30, 1, 0)
-    flingIcon.Position = UDim2.new(1, -38, 0, 0)
-    flingIcon.BackgroundTransparency = 1
-    flingIcon.Text = "💥"
-    flingIcon.TextSize = 16
-    flingIcon.Parent = row
-
-    row.MouseEnter:Connect(function()
-        tw(row, Ease.Fast, { BackgroundColor3 = Theme.ElementHov })
-        tw(stripe, Ease.Fast, { Size = UDim2.new(0, 4, 0.7, 0) })
-    end)
-    row.MouseLeave:Connect(function()
-        tw(row, Ease.Fast, { BackgroundColor3 = Theme.Element })
-        tw(stripe, Ease.Fast, { Size = UDim2.new(0, 3, 0.6, 0) })
-    end)
+    row.MouseEnter:Connect(function() tw(row, Ease.Fast, { BackgroundColor3 = Theme.ElementHov }) end)
+    row.MouseLeave:Connect(function() tw(row, Ease.Fast, { BackgroundColor3 = Theme.Element }) end)
     row.MouseButton1Click:Connect(function()
         createRipple(row, Mouse.X - row.AbsolutePosition.X, Mouse.Y - row.AbsolutePosition.Y)
         callback(plr)
@@ -423,10 +305,9 @@ local function createPlayerRow(parent, plr, role, roleColor, callback)
 end
 
 --// ============================================================
---//  UI:init
+--//  MAIN UI INIT
 --// ============================================================
 function UI:init(Features)
-    -- ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "ProjectXUI"
     ScreenGui.ResetOnSpawn = false
@@ -445,8 +326,7 @@ function UI:init(Features)
     FloatingBtn.Parent = ScreenGui
     corner(FloatingBtn, 999)
     stroke(FloatingBtn, Color3.fromRGB(255, 255, 255), 2, 0.6)
-
-    local FloatGrad = gradient(FloatingBtn, Theme.Accent, Color3.fromRGB(180, 120, 255), 45)
+    gradient(FloatingBtn, Theme.Accent, Color3.fromRGB(180, 120, 255), 45)
 
     local FloatIcon = Instance.new("TextLabel")
     FloatIcon.Size = UDim2.new(1, 0, 1, 0)
@@ -466,13 +346,6 @@ function UI:init(Features)
         end
     end)
 
-    FloatingBtn.MouseEnter:Connect(function()
-        tw(FloatingBtn, Ease.Bounce, { Size = UDim2.new(0, 62, 0, 62) })
-    end)
-    FloatingBtn.MouseLeave:Connect(function()
-        tw(FloatingBtn, Ease.Smooth, { Size = UDim2.new(0, 56, 0, 56) })
-    end)
-
     -- Main Window
     local Main = Instance.new("Frame")
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -487,9 +360,6 @@ function UI:init(Features)
     corner(Main, 16)
     stroke(Main, Theme.Stroke, 1.5, 0.3)
 
-    local MainGrad = gradient(Main, Color3.fromRGB(28, 28, 40), Color3.fromRGB(14, 14, 20), 135)
-
-    -- Header
     local Header = Instance.new("Frame")
     Header.Size = UDim2.new(1, 0, 0, 46)
     Header.BackgroundColor3 = Theme.Panel
@@ -497,33 +367,6 @@ function UI:init(Features)
     Header.BorderSizePixel = 0
     Header.Parent = Main
     corner(Header, 16)
-
-    local HeaderMask = Instance.new("Frame")
-    HeaderMask.Size = UDim2.new(1, 0, 0, 14)
-    HeaderMask.Position = UDim2.new(0, 0, 1, -14)
-    HeaderMask.BackgroundColor3 = Theme.Panel
-    HeaderMask.BackgroundTransparency = 0.3
-    HeaderMask.BorderSizePixel = 0
-    HeaderMask.Parent = Header
-
-    local Logo = Instance.new("Frame")
-    Logo.Size = UDim2.new(0, 26, 0, 26)
-    Logo.Position = UDim2.new(0, 16, 0.5, -13)
-    Logo.BackgroundColor3 = Theme.Accent
-    Logo.BorderSizePixel = 0
-    Logo.Parent = Header
-    corner(Logo, 8)
-
-    local LogoGrad = gradient(Logo, Theme.Accent, Color3.fromRGB(180, 120, 255), 45)
-
-    local LogoText = Instance.new("TextLabel")
-    LogoText.Size = UDim2.new(1, 0, 1, 0)
-    LogoText.BackgroundTransparency = 1
-    LogoText.Text = "X"
-    LogoText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    LogoText.Font = Enum.Font.GothamBold
-    LogoText.TextSize = 14
-    LogoText.Parent = Logo
 
     local Title = Instance.new("TextLabel")
     Title.Size = UDim2.new(0, 200, 1, 0)
@@ -535,17 +378,6 @@ function UI:init(Features)
     Title.TextSize = 15
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Header
-
-    local VersionLbl = Instance.new("TextLabel")
-    VersionLbl.Size = UDim2.new(0, 60, 1, 0)
-    VersionLbl.Position = UDim2.new(1, -100, 0, 0)
-    VersionLbl.BackgroundTransparency = 1
-    VersionLbl.Text = "v1.0"
-    VersionLbl.TextColor3 = Theme.TextDim
-    VersionLbl.Font = Enum.Font.Gotham
-    VersionLbl.TextSize = 11
-    VersionLbl.TextXAlignment = Enum.TextXAlignment.Right
-    VersionLbl.Parent = Header
 
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 28, 0, 28)
@@ -560,19 +392,10 @@ function UI:init(Features)
     CloseBtn.Parent = Header
     corner(CloseBtn, 8)
 
-    CloseBtn.MouseEnter:Connect(function()
-        tw(CloseBtn, Ease.Fast, { BackgroundColor3 = Theme.Danger })
-    end)
-    CloseBtn.MouseLeave:Connect(function()
-        tw(CloseBtn, Ease.Fast, { BackgroundColor3 = Theme.Element })
-    end)
-
-    -- Tab Bar
     local TabBar = Instance.new("Frame")
     TabBar.Size = UDim2.new(0, 155, 1, -60)
     TabBar.Position = UDim2.new(0, 10, 0, 54)
     TabBar.BackgroundTransparency = 1
-    TabBar.BorderSizePixel = 0
     TabBar.Parent = Main
 
     local TabLayout = Instance.new("UIListLayout")
@@ -580,7 +403,6 @@ function UI:init(Features)
     TabLayout.SortOrder = Enum.SortOrder.LayoutOrder
     TabLayout.Parent = TabBar
 
-    -- Content
     local Content = Instance.new("Frame")
     Content.Size = UDim2.new(1, -183, 1, -60)
     Content.Position = UDim2.new(0, 173, 0, 54)
@@ -596,7 +418,6 @@ function UI:init(Features)
     ContentPad.PaddingBottom = UDim.new(0, 8)
     ContentPad.Parent = Content
 
-    -- Tabs System
     local Tabs = {}
     local ActiveTab = nil
 
@@ -657,7 +478,7 @@ function UI:init(Features)
         Layout.SortOrder = Enum.SortOrder.LayoutOrder
         Layout.Parent = Page
 
-        Tabs[name] = { Button = Btn, Page = Page, Indicator = Indicator, Label = Label, Emoji = Emoji }
+        Tabs[name] = { Button = Btn, Page = Page, Indicator = Indicator, Label = Label }
 
         local function activate()
             for _, t in pairs(Tabs) do
@@ -665,19 +486,11 @@ function UI:init(Features)
                 tw(t.Button, Ease.Fast, { BackgroundColor3 = Theme.Panel })
                 tw(t.Indicator, Ease.Fast, { BackgroundTransparency = 1, Size = UDim2.new(0, 3, 0.4, 0) })
                 tw(t.Label, Ease.Fast, { TextColor3 = Theme.Text })
-                tw(t.Emoji, Ease.Fast, { TextColor3 = Theme.Text })
             end
             Page.Visible = true
-            Page.Position = UDim2.new(0, 20, 0, 0)
-            tw(Page, Ease.Elastic, { Position = UDim2.new(0, 0, 0, 0) })
             tw(Btn, Ease.Fast, { BackgroundColor3 = Theme.PanelLight })
-            tw(Indicator, Ease.Elastic, {
-                BackgroundTransparency = 0,
-                Size = UDim2.new(0, 3, 0.7, 0),
-                Position = UDim2.new(0, 0, 0.15, 0),
-            })
+            tw(Indicator, Ease.Elastic, { BackgroundTransparency = 0, Size = UDim2.new(0, 3, 0.7, 0) })
             tw(Label, Ease.Fast, { TextColor3 = Theme.Accent })
-            tw(Emoji, Ease.Fast, { TextColor3 = Theme.Accent })
             ActiveTab = name
         end
 
@@ -686,79 +499,51 @@ function UI:init(Features)
             activate()
         end)
 
-        Btn.MouseEnter:Connect(function()
-            if ActiveTab ~= name then
-                tw(Btn, Ease.Fast, { BackgroundColor3 = Theme.PanelLight })
-                tw(Label, Ease.Fast, { TextColor3 = Theme.Text })
-            end
-        end)
-        Btn.MouseLeave:Connect(function()
-            if ActiveTab ~= name then
-                tw(Btn, Ease.Fast, { BackgroundColor3 = Theme.Panel })
-                tw(Label, Ease.Fast, { TextColor3 = Theme.Text })
-            end
-        end)
-
         return Page
     end
 
-    -- 3 Tabs
+    -- Вкладки
     local MovePage  = createTab("Movement", "M")
     local FlingPage = createTab("Fling", "F")
     local AnimPage  = createTab("Animation", "A")
+    local EmotePage = createTab("Emotes", "E")
 
     -- ==================================================
-    -- MOVEMENT TAB
+    -- 1. MOVEMENT TAB
     -- ==================================================
     createSection(MovePage, "Speed")
-
     createToggle(MovePage, "Enable Speed", false, function(v)
         if Features.Movement then Features.Movement:setSpeed(v) end
     end)
     createSlider(MovePage, "Speed Value", 16, 200, 32, function(v)
-        if Features.Movement and Features.Movement.setSpeedValue then
-            Features.Movement:setSpeedValue(v)
-        end
+        if Features.Movement and Features.Movement.setSpeedValue then Features.Movement:setSpeedValue(v) end
     end)
 
     createSection(MovePage, "Fly")
-
     createToggle(MovePage, "Enable Fly", false, function(v)
         if Features.Movement then Features.Movement:setFly(v) end
     end)
     createSlider(MovePage, "Fly Speed", 10, 200, 60, function(v)
-        if Features.Movement and Features.Movement.setFlySpeed then
-            Features.Movement:setFlySpeed(v)
-        end
+        if Features.Movement and Features.Movement.setFlySpeed then Features.Movement:setFlySpeed(v) end
     end)
 
     createSection(MovePage, "Noclip")
-
     createToggle(MovePage, "Enable Noclip", false, function(v)
         if Features.Movement then Features.Movement:setNoclip(v) end
     end)
 
-    --// --- SHAHED & ROCKET SECTION ---
     createSection(MovePage, "Shahed & Rocket")
-
     createToggle(MovePage, "Enable Shahed (Key: G)", false, function(v)
-        if Features.Shahed and Features.Shahed.setEnabled then
-            Features.Shahed:setEnabled(v)
-        end
+        if Features.Shahed and Features.Shahed.setEnabled then Features.Shahed:setEnabled(v) end
     end)
-
     createToggle(MovePage, "Enable Rocket (Key: H)", false, function(v)
-        if Features.Rocket and Features.Rocket.setEnabled then
-            Features.Rocket:setEnabled(v)
-        end
+        if Features.Rocket and Features.Rocket.setEnabled then Features.Rocket:setEnabled(v) end
     end)
-    --// ----------------------------
 
     -- ==================================================
-    -- FLING TAB (list only)
+    -- 2. FLING TAB
     -- ==================================================
     createSection(FlingPage, "Players — Click to Fling")
-
     local playerListFrame = Instance.new("Frame")
     playerListFrame.Size = UDim2.new(1, -16, 0, 380)
     playerListFrame.BackgroundColor3 = Theme.Element
@@ -772,14 +557,10 @@ function UI:init(Features)
     playerListScroll.BackgroundTransparency = 1
     playerListScroll.BorderSizePixel = 0
     playerListScroll.ScrollBarThickness = 3
-    playerListScroll.ScrollBarImageColor3 = Theme.Accent
-    playerListScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-    playerListScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     playerListScroll.Parent = playerListFrame
 
     local listLayout = Instance.new("UIListLayout")
     listLayout.Padding = UDim.new(0, 4)
-    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
     listLayout.Parent = playerListScroll
 
     local function refreshPlayerList()
@@ -798,35 +579,13 @@ function UI:init(Features)
     task.spawn(function()
         task.wait(1)
         pcall(refreshPlayerList)
-        while task.wait(3) do
-            pcall(refreshPlayerList)
-        end
+        while task.wait(3) do pcall(refreshPlayerList) end
     end)
 
     -- ==================================================
-    -- ANIMATION TAB
+    -- 3. ANIMATION TAB
     -- ==================================================
     createSection(AnimPage, "R15 Animation Sets")
-
-    local animInfoFrame = Instance.new("Frame")
-    animInfoFrame.Size = UDim2.new(1, -16, 0, 42)
-    animInfoFrame.BackgroundColor3 = Theme.Element
-    animInfoFrame.BorderSizePixel = 0
-    animInfoFrame.Parent = AnimPage
-    corner(animInfoFrame, 10)
-
-    local animInfoText = Instance.new("TextLabel")
-    animInfoText.Size = UDim2.new(1, -20, 1, 0)
-    animInfoText.Position = UDim2.new(0, 10, 0, 0)
-    animInfoText.BackgroundTransparency = 1
-    animInfoText.Text = "Works only on R15 characters. Click to apply."
-    animInfoText.TextColor3 = Theme.TextDim
-    animInfoText.Font = Enum.Font.Gotham
-    animInfoText.TextSize = 11
-    animInfoText.TextXAlignment = Enum.TextXAlignment.Left
-    animInfoText.TextYAlignment = Enum.TextYAlignment.Center
-    animInfoText.Parent = animInfoFrame
-
     local animListFrame = Instance.new("Frame")
     animListFrame.Size = UDim2.new(1, -16, 0, 400)
     animListFrame.BackgroundColor3 = Theme.Element
@@ -838,33 +597,12 @@ function UI:init(Features)
     animScroll.Size = UDim2.new(1, -8, 1, -8)
     animScroll.Position = UDim2.new(0, 4, 0, 4)
     animScroll.BackgroundTransparency = 1
-    animScroll.BorderSizePixel = 0
     animScroll.ScrollBarThickness = 3
-    animScroll.ScrollBarImageColor3 = Theme.Accent
-    animScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-    animScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
     animScroll.Parent = animListFrame
 
     local animListLayout = Instance.new("UIListLayout")
     animListLayout.Padding = UDim.new(0, 4)
-    animListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     animListLayout.Parent = animScroll
-
-    local animButtons = {}
-    local activeAnimName = nil
-
-    local function setActiveAnim(name)
-        for animName, btn in pairs(animButtons) do
-            if animName == name then
-                tw(btn, Ease.Fast, { BackgroundColor3 = Theme.Accent })
-                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            else
-                tw(btn, Ease.Fast, { BackgroundColor3 = Theme.Element })
-                btn.TextColor3 = Theme.Text
-            end
-        end
-        activeAnimName = name
-    end
 
     if Features.Animation and Features.Animation.getAnimationList then
         local list = Features.Animation:getAnimationList()
@@ -881,52 +619,136 @@ function UI:init(Features)
             btn.Parent = animScroll
             corner(btn, 7)
 
-            btn.MouseEnter:Connect(function()
-                if activeAnimName ~= name then
-                    tw(btn, Ease.Fast, { BackgroundColor3 = Theme.ElementHov })
-                end
-            end)
-            btn.MouseLeave:Connect(function()
-                if activeAnimName ~= name then
-                    tw(btn, Ease.Fast, { BackgroundColor3 = Theme.Element })
-                end
-            end)
             btn.MouseButton1Click:Connect(function()
-                createRipple(btn, Mouse.X - btn.AbsolutePosition.X, Mouse.Y - btn.AbsolutePosition.Y)
-                if Features.Animation then
-                    Features.Animation:playAnimationSet(name)
-                    setActiveAnim(name)
-                end
+                if Features.Animation then Features.Animation:playAnimationSet(name) end
             end)
-
-            animButtons[name] = btn
         end
     end
 
-    createSection(AnimPage, "Controls")
-
-    createActionButton(AnimPage, "RESET ANIMATIONS", Theme.Danger, function()
-        if Features.Animation then
-            Features.Animation:reset()
-            for _, btn in pairs(animButtons) do
-                tw(btn, Ease.Fast, { BackgroundColor3 = Theme.Element })
-                btn.TextColor3 = Theme.Text
-            end
-            activeAnimName = nil
+    -- ==================================================
+    -- 4. EMOTES TAB (З пошуком та картинками)
+    -- ==================================================
+    createSection(EmotePage, "Settings")
+    createToggle(EmotePage, "Freeze Emote (Walk with emote)", false, function(v)
+        if Features.Emotes and Features.Emotes.setFreeze then
+            Features.Emotes:setFreeze(v)
         end
     end)
 
-    -- Activate first tab
+    createSection(EmotePage, "Search & Play")
+    
+    -- Пошуковий рядок
+    local searchFrame = Instance.new("Frame")
+    searchFrame.Size = UDim2.new(1, -16, 0, 40)
+    searchFrame.BackgroundColor3 = Theme.Element
+    searchFrame.BorderSizePixel = 0
+    searchFrame.Parent = EmotePage
+    corner(searchFrame, 10)
+
+    local searchBox = Instance.new("TextBox")
+    searchBox.Size = UDim2.new(1, -20, 1, 0)
+    searchBox.Position = UDim2.new(0, 10, 0, 0)
+    searchBox.BackgroundTransparency = 1
+    searchBox.PlaceholderText = "Пошук емоції (напр. dance, wave...)"
+    searchBox.Text = ""
+    searchBox.TextColor3 = Theme.Text
+    searchBox.PlaceholderColor3 = Theme.TextDim
+    searchBox.Font = Enum.Font.Gotham
+    searchBox.TextSize = 13
+    searchBox.TextXAlignment = Enum.TextXAlignment.Left
+    searchBox.ClearTextOnFocus = false
+    searchBox.Parent = searchFrame
+
+    -- Список емоцій
+    local emoteListFrame = Instance.new("Frame")
+    emoteListFrame.Size = UDim2.new(1, -16, 0, 350)
+    emoteListFrame.BackgroundColor3 = Theme.Element
+    emoteListFrame.BorderSizePixel = 0
+    emoteListFrame.Parent = EmotePage
+    corner(emoteListFrame, 10)
+
+    local emoteScroll = Instance.new("ScrollingFrame")
+    emoteScroll.Size = UDim2.new(1, -8, 1, -8)
+    emoteScroll.Position = UDim2.new(0, 4, 0, 4)
+    emoteScroll.BackgroundTransparency = 1
+    emoteScroll.ScrollBarThickness = 3
+    emoteScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+    emoteScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    emoteScroll.Parent = emoteListFrame
+
+    local emoteLayout = Instance.new("UIListLayout")
+    emoteLayout.Padding = UDim.new(0, 4)
+    emoteLayout.Parent = emoteScroll
+
+    local function refreshEmoteList(query)
+        for _, child in ipairs(emoteScroll:GetChildren()) do
+            if child:IsA("TextButton") then child:Destroy() end
+        end
+
+        if not Features.Emotes or not Features.Emotes.searchEmotes then return end
+        local results = Features.Emotes:searchEmotes(query)
+
+        for _, emote in ipairs(results) do
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1, -4, 0, 48)
+            btn.BackgroundColor3 = Theme.Element
+            btn.Text = ""
+            btn.BorderSizePixel = 0
+            btn.AutoButtonColor = false
+            btn.Parent = emoteScroll
+            corner(btn, 7)
+
+            local img = Instance.new("ImageLabel")
+            img.Size = UDim2.new(0, 36, 0, 36)
+            img.Position = UDim2.new(0, 6, 0.5, -18)
+            img.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+            img.BorderSizePixel = 0
+            img.Image = "rbxthumb://type=Asset&id=" .. emote.id .. "&w=150&h=150"
+            img.Parent = btn
+            corner(img, 6)
+
+            local text = Instance.new("TextLabel")
+            text.Size = UDim2.new(1, -50, 1, 0)
+            text.Position = UDim2.new(0, 50, 0, 0)
+            text.BackgroundTransparency = 1
+            text.Text = emote.name
+            text.TextColor3 = Theme.Text
+            text.Font = Enum.Font.GothamMedium
+            text.TextSize = 13
+            text.TextXAlignment = Enum.TextXAlignment.Left
+            text.Parent = btn
+
+            btn.MouseEnter:Connect(function() tw(btn, Ease.Fast, { BackgroundColor3 = Theme.ElementHov }) end)
+            btn.MouseLeave:Connect(function() tw(btn, Ease.Fast, { BackgroundColor3 = Theme.Element }) end)
+            
+            btn.MouseButton1Click:Connect(function()
+                createRipple(btn, Mouse.X - btn.AbsolutePosition.X, Mouse.Y - btn.AbsolutePosition.Y)
+                if Features.Emotes and Features.Emotes.playEmote then
+                    Features.Emotes:playEmote(emote.name, emote.id)
+                end
+            end)
+        end
+    end
+
+    task.spawn(function()
+        task.wait(0.5)
+        refreshEmoteList("")
+    end)
+
+    searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+        refreshEmoteList(searchBox.Text)
+    end)
+
+    -- ==================================================
+    -- Активація першої вкладки та логіка вікна
+    -- ==================================================
     Tabs["Movement"].Page.Visible = true
     ActiveTab = "Movement"
     Tabs["Movement"].Button.BackgroundColor3 = Theme.PanelLight
     Tabs["Movement"].Indicator.BackgroundTransparency = 0
     Tabs["Movement"].Indicator.Size = UDim2.new(0, 3, 0.7, 0)
-    Tabs["Movement"].Indicator.Position = UDim2.new(0, 0, 0.15, 0)
     Tabs["Movement"].Label.TextColor3 = Theme.Accent
-    Tabs["Movement"].Emoji.TextColor3 = Theme.Accent
 
-    -- Open / Close animations
     local isOpen = false
     local opening = false
 
@@ -936,7 +758,6 @@ function UI:init(Features)
         Main.Visible = true
         Main.Size = UDim2.new(0, 0, 0, 0)
         tw(Main, Ease.Enter, { Size = UDim2.new(0, 560, 0, 500) })
-        tw(FloatingBtn, Ease.Smooth, { BackgroundTransparency = 0.6 })
         task.delay(0.32, function() isOpen = true; opening = false end)
     end
 
@@ -945,13 +766,9 @@ function UI:init(Features)
         isOpen = false
         local t = tw(Main, Ease.Exit, { Size = UDim2.new(0, 0, 0, 0) })
         t.Completed:Connect(function() Main.Visible = false end)
-        tw(FloatingBtn, Ease.Smooth, { BackgroundTransparency = 0 })
     end
 
-    FloatingBtn.MouseButton1Click:Connect(function()
-        if isOpen then closePanel() else openPanel() end
-    end)
-
+    FloatingBtn.MouseButton1Click:Connect(function() if isOpen then closePanel() else openPanel() end end)
     CloseBtn.MouseButton1Click:Connect(closePanel)
 
     UserInputService.InputBegan:Connect(function(input, gpe)
@@ -961,29 +778,7 @@ function UI:init(Features)
         end
     end)
 
-    -- Drag Float
-    local draggingFloat, dragFloatStart, floatStartPos
-    FloatingBtn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            draggingFloat = true
-            dragFloatStart = input.Position
-            floatStartPos = FloatingBtn.Position
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if draggingFloat and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - dragFloatStart
-            FloatingBtn.Position = UDim2.new(
-                floatStartPos.X.Scale, floatStartPos.X.Offset + delta.X,
-                floatStartPos.Y.Scale, floatStartPos.Y.Offset + delta.Y
-            )
-        end
-    end)
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then draggingFloat = false end
-    end)
-
-    -- Drag Main
+    -- Перетягування вікна
     local dragging, dragStart, startPos
     Header.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -995,10 +790,7 @@ function UI:init(Features)
     UserInputService.InputChanged:Connect(function(input)
         if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
             local delta = input.Position - dragStart
-            Main.Position = UDim2.new(
-                startPos.X.Scale, startPos.X.Offset + delta.X,
-                startPos.Y.Scale, startPos.Y.Offset + delta.Y
-            )
+            Main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
     UserInputService.InputEnded:Connect(function(input)
