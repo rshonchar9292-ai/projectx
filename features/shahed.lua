@@ -1,6 +1,6 @@
 --// ============================================================
 --// features/shahed.lua
---// Shahed Strike - Console Logs Edition
+--// Shahed Strike - Steerable Drone Edition (No Signal Disabled)
 --// ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -11,67 +11,29 @@ local Debris = game:GetService("Debris")
 local LocalPlayer = Players.LocalPlayer
 
 local CONFIG = {
-    Speed = 45,
+    Speed = 50, -- Трохи збільшив швидкість для кращого відчуття польоту
     Lifetime = 15,
     SpawnDistance = 12,
     Cooldown = 2,
 }
 
 local lastSpawnTime = 0
-local activeDrones = {}
+local isDroneActive = false
 
 local function log(msg) print("[Shahed] " .. msg) end
 local function logErr(msg) warn("[Shahed ERROR] " .. msg) end
 
 --// ============================================================
---// ЕФЕКТ "NO SIGNAL"
+--// ЕФЕКТ "NO SIGNAL" (Тимчасово вимкнено)
 --// ============================================================
 local function showNoSignal()
-    local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
-    if not playerGui then return end
-
-    local oldGui = playerGui:FindFirstChild("ShahedNoSignal")
-    if oldGui then oldGui:Destroy() end
-
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "ShahedNoSignal"
-    gui.IgnoreGuiInset = true
-    gui.DisplayOrder = 999
-    gui.Parent = playerGui
-
-    local bg = Instance.new("Frame")
-    bg.Size = UDim2.new(1,0,1,0)
-    bg.BackgroundColor3 = Color3.new(0,0,0)
-    bg.BackgroundTransparency = 1
-    bg.Parent = gui
-
-    local txt = Instance.new("TextLabel")
-    txt.Size = UDim2.new(1,0,0.2,0)
-    txt.Position = UDim2.new(0,0,0.4,0)
-    txt.BackgroundTransparency = 1
-    txt.Text = "NO SIGNAL"
-    txt.TextColor3 = Color3.new(1,1,1)
-    txt.TextScaled = true
-    txt.Font = Enum.Font.Code
-    txt.TextTransparency = 1
-    txt.Parent = bg
-
-    local tweenIn = TweenInfo.new(0.1)
-    TweenService:Create(bg, tweenIn, {BackgroundTransparency = 0}):Play()
-    TweenService:Create(txt, tweenIn, {TextTransparency = 0}):Play()
-
-    task.delay(2, function()
-        local tweenOut = TweenInfo.new(0.4)
-        local tOut = TweenService:Create(bg, tweenOut, {BackgroundTransparency = 1})
-        tOut:Play()
-        TweenService:Create(txt, tweenOut, {TextTransparency = 1}):Play()
-        tOut.Completed:Connect(function() gui:Destroy() end)
-    end)
+    --[[ 
+    ТУТ БУВ КОД NO SIGNAL. 
+    Я його закоментував, щоб ти бачив флінг. 
+    Коли закінчиш тести, просто розкоментуй його (прибери --[[ та ]]).
+    ]]
 end
 
---// ============================================================
---// ВИБУХ ТА СПАВН
---// ============================================================
 local function createExplosion(position)
     local explosion = Instance.new("Explosion")
     explosion.Position = position
@@ -81,23 +43,26 @@ local function createExplosion(position)
     explosion.Parent = workspace
 end
 
+--// ============================================================
+--// ЛОГІКА ДРОНА
+--// ============================================================
 local function spawnShahed()
+    if isDroneActive then
+        log("Дрон вже в повітрі!")
+        return
+    end
     if tick() - lastSpawnTime < CONFIG.Cooldown then
         log("⏳ Кулдаун! Зачекай.")
         return
     end
     lastSpawnTime = tick()
+    isDroneActive = true
 
     local Camera = workspace.CurrentCamera
-    if not Camera then
-        logErr("Камера не знайдена!")
-        return
-    end
-
     local Char = LocalPlayer.Character
-    if not Char then
-        logErr("Персонаж гравця не знайдений!")
-        return
+    if not Camera or not Char then 
+        isDroneActive = false
+        return 
     end
     
     local spawnCFrame = Camera.CFrame * CFrame.new(0, 0, -CONFIG.SpawnDistance)
@@ -106,6 +71,7 @@ local function spawnShahed()
     local model = Instance.new("Model")
     model.Name = "ShahedDrone"
 
+    -- Хітбокс
     local hitbox = Instance.new("Part")
     hitbox.Name = "Hitbox"
     hitbox.Size = Vector3.new(4, 2, 5)
@@ -113,6 +79,7 @@ local function spawnShahed()
     hitbox.CanCollide = false
     hitbox.Parent = model
 
+    -- Корпус
     local body = Instance.new("Part")
     body.Size = Vector3.new(2, 1, 4)
     body.Color = Color3.fromRGB(80, 80, 80)
@@ -120,6 +87,7 @@ local function spawnShahed()
     body.CanCollide = false
     body.Parent = model
 
+    -- Крила
     local wingL = Instance.new("Part")
     wingL.Size = Vector3.new(4, 0.2, 1)
     wingL.Color = Color3.fromRGB(60, 60, 60)
@@ -144,8 +112,21 @@ local function spawnShahed()
     local w3 = Instance.new("WeldConstraint", hitbox)
     w3.Part0, w3.Part1 = hitbox, wingR
 
+    -- Додаємо гіроскоп, щоб дрон повертався носом куди летить
+    local gyro = Instance.new("BodyGyro")
+    gyro.MaxTorque = Vector3.new(40000, 40000, 40000)
+    gyro.P = 3000
+    gyro.D = 500
+    gyro.Parent = hitbox
+
     model.Parent = workspace
-    log("✅ Дрон успішно створено в Workspace.")
+    log("✅ Дрон створено. Камера перемикається...")
+
+    -- ПЕРЕМИКАННЯ КАМЕРИ НА ДРОНА
+    local originalSubject = Camera.CameraSubject
+    Camera.CameraSubject = hitbox
+    -- Віддаляємо камеру трохи назад для кращого огляду
+    LocalPlayer.CameraMaxZoomDistance = 25
 
     local startTime = tick()
     local moveConn
@@ -156,16 +137,38 @@ local function spawnShahed()
             return
         end
         if tick() - startTime > CONFIG.Lifetime then
-            log("Час дрона вичерпано (15с). Знищено.")
+            log("Час дрона вичерпано (15с).")
             model:Destroy()
-            moveConn:Disconnect()
             return
         end
-        if hitbox then
-            hitbox.AssemblyLinearVelocity = Camera.CFrame.LookVector * CONFIG.Speed
+        
+        if hitbox and Camera then
+            -- Рухаємось туди, куди дивиться камера
+            local lookDir = Camera.CFrame.LookVector
+            hitbox.AssemblyLinearVelocity = lookDir * CONFIG.Speed
+            
+            -- Повертаємо дрон носом вперед
+            gyro.CFrame = CFrame.lookAt(hitbox.Position, hitbox.Position + lookDir)
         end
     end)
 
+    -- ВІДНОВЛЕННЯ КАМЕРИ (якщо дрон знищено будь-яким способом)
+    model.Destroying:Connect(function()
+        if moveConn then moveConn:Disconnect() end
+        
+        -- Повертаємо камеру назад гравцю
+        if Camera then
+            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                Camera.CameraSubject = LocalPlayer.Character.Humanoid
+            else
+                Camera.CameraSubject = originalSubject
+            end
+        end
+        isDroneActive = false
+        log("Дрон знищено. Камеру повернено.")
+    end)
+
+    -- ДЕТЕКЦІЯ КОЛІЗІЇ
     hitbox.Touched:Connect(function(hit)
         local char = hit:FindFirstAncestorOfClass("Model")
         
@@ -195,9 +198,10 @@ local function spawnShahed()
                 end
 
                 createExplosion(hitbox.Position)
-                showNoSignal()
+                
+                -- showNoSignal() -- УВІМКНЕШ ПОТІМ
+                
                 model:Destroy()
-                if moveConn then moveConn:Disconnect() end
             end
         end
     end)
@@ -209,11 +213,10 @@ end
 UserInputService.InputBegan:Connect(function(input, gpe)
     if gpe then return end
     if input.KeyCode == Enum.KeyCode.G then
-        -- Перевіряємо, чи увімкнено тогл в меню
         if _G.ShahedEnabled == true then
             spawnShahed()
         else
-            log("Клавіша G натиснута, але тогл в меню ВИМКНЕНО (_G.ShahedEnabled = false або nil).")
+            log("Клавіша G натиснута, але тогл в меню ВИМКНЕНО.")
         end
     end
 end)
@@ -224,5 +227,5 @@ function ShahedModule:setEnabled(state)
     log("Меню змінило статус на: " .. tostring(state))
 end
 
-log("Shahed Strike (Console Logs) завантажено.")
+log("Shahed Strike (Steerable Drone) завантажено.")
 return ShahedModule
