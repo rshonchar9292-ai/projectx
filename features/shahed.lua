@@ -1,6 +1,6 @@
 --// ============================================================
 --// features/shahed.lua
---// Функція "Shahed Strike" з інтеграцією FotliFling
+--// Функція "Shahed Strike" (Інтегровано з ProjectX Fling)
 --// ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -18,7 +18,7 @@ local CONFIG = {
 local activeDrones = {}
 
 --// ============================================================
---// NO SIGNAL GUI
+--// ЕФЕКТ "NO SIGNAL"
 --// ============================================================
 local function showNoSignal()
     local playerGui = LocalPlayer:FindFirstChild("PlayerGui")
@@ -89,7 +89,7 @@ local function showNoSignal()
 end
 
 --// ============================================================
---// СПАВН ТА РУХ ДРОНА
+--// СПАВН ТА ЛОГІКА ДРОНА
 --// ============================================================
 local function spawnShahed()
     local Camera = workspace.CurrentCamera
@@ -100,6 +100,7 @@ local function spawnShahed()
     local model = Instance.new("Model")
     model.Name = "ShahedDrone"
 
+    -- Хітбокс (невидимий)
     local hitbox = Instance.new("Part")
     hitbox.Name = "Hitbox"
     hitbox.Size = Vector3.new(4, 2, 5)
@@ -107,6 +108,7 @@ local function spawnShahed()
     hitbox.CanCollide = false
     hitbox.Parent = model
 
+    -- Корпус
     local body = Instance.new("Part")
     body.Size = Vector3.new(2, 1, 4)
     body.Color = Color3.fromRGB(80, 80, 80)
@@ -114,6 +116,7 @@ local function spawnShahed()
     body.CanCollide = false
     body.Parent = model
 
+    -- Крила
     local wingL = Instance.new("Part")
     wingL.Size = Vector3.new(4, 0.2, 1)
     wingL.Color = Color3.fromRGB(60, 60, 60)
@@ -127,6 +130,7 @@ local function spawnShahed()
     model.PrimaryPart = hitbox
     model:PivotTo(spawnCFrame)
 
+    -- Збираємо модель
     body.CFrame = hitbox.CFrame
     wingL.CFrame = hitbox.CFrame * CFrame.new(-2, 0, 0)
     wingR.CFrame = hitbox.CFrame * CFrame.new(2, 0, 0)
@@ -144,6 +148,7 @@ local function spawnShahed()
     local startTime = tick()
     local moveConn
     
+    -- Рух
     moveConn = RunService.Heartbeat:Connect(function()
         if not model.Parent then
             moveConn:Disconnect()
@@ -159,7 +164,7 @@ local function spawnShahed()
         end
     end)
 
-    --// ДЕТЕКЦІЯ КОЛІЗІЇ ТА ВИКЛИК FLING
+    -- Колізія
     hitbox.Touched:Connect(function(hit)
         local char = hit:FindFirstAncestorOfClass("Model")
         
@@ -167,29 +172,26 @@ local function spawnShahed()
             local hum = char:FindFirstChildOfClass("Humanoid")
             if hum and hum.Health > 0 then
                 
-                -- Знаходимо гравця за його моделлю
                 local targetPlayer = Players:GetPlayerFromCharacter(char)
 
-                -- Викликаємо наш новий FotliFling (якщо він є)
-                if targetPlayer and _G.FotliFling then
+                -- ІНТЕГРАЦІЯ З FLING.LUA
+                local FlingModule = _G.ProjectXFeatures and _G.ProjectXFeatures.Fling
+                if targetPlayer and FlingModule and FlingModule.flingPlayer then
                     task.spawn(function()
                         pcall(function()
-                            -- Метод 1 = SkidFling (найпотужніший)
-                            _G.FotliFling:flingPlayer(targetPlayer, 1)
+                            -- Викликаємо SkidFling (режим 1)
+                            FlingModule:flingPlayer(targetPlayer, 1)
                         end)
                     end)
-                else
-                    -- Резервний варіант, якщо це NPC або fling.lua не завантажився
+                elseif targetPlayer then
+                    -- Резервний метод, якщо Fling не завантажився
                     local hrp = char:FindFirstChild("HumanoidRootPart")
                     if hrp then
                         hrp.AssemblyLinearVelocity = Vector3.new(5000, 5000, 5000)
                     end
                 end
 
-                -- Показуємо ефект
                 showNoSignal()
-                
-                -- Знищуємо дрон
                 model:Destroy()
                 if moveConn then moveConn:Disconnect() end
             end
@@ -202,9 +204,19 @@ end
 --// ============================================================
 UserInputService.InputBegan:Connect(function(input, gpe)
     if gpe then return end
+    -- Спрацьовує тільки якщо тогл у меню увімкнено
     if input.KeyCode == Enum.KeyCode.G and _G.ShahedEnabled then
         spawnShahed()
     end
 end)
 
-print("[FotliMenu] Shahed Strike (Fling Integrated) loaded.")
+--// ============================================================
+--// ЕКСПОРТ МОДУЛЯ ДЛЯ UI
+--// ============================================================
+local ShahedModule = {}
+function ShahedModule:setEnabled(state)
+    _G.ShahedEnabled = state
+end
+
+print("[ProjectX] Shahed Strike module loaded (Ready).")
+return ShahedModule
