@@ -23,9 +23,6 @@ local isDroneActive = false
 local function log(msg) print("[Shahed] " .. msg) end
 local function logErr(msg) warn("[Shahed ERROR] " .. msg) end
 
---// ============================================================
---// ВИБУХ
---// ============================================================
 local function createExplosion(position)
     local explosion = Instance.new("Explosion")
     explosion.Position = position
@@ -35,9 +32,6 @@ local function createExplosion(position)
     explosion.Parent = workspace
 end
 
---// ============================================================
---// ЛОГІКА ДРОНА
---// ============================================================
 local function spawnShahed()
     if isDroneActive then
         log("Дрон вже в повітрі!")
@@ -104,7 +98,7 @@ local function spawnShahed()
     local w3 = Instance.new("WeldConstraint", hitbox)
     w3.Part0, w3.Part1 = hitbox, wingR
 
-    -- Гіроскоп для поворотів
+    -- Гіроскоп
     local gyro = Instance.new("BodyGyro")
     gyro.MaxTorque = Vector3.new(40000, 40000, 40000)
     gyro.P = 3000
@@ -143,6 +137,7 @@ local function spawnShahed()
     -- ВІДНОВЛЕННЯ КАМЕРИ
     model.Destroying:Connect(function()
         if moveConn then moveConn:Disconnect() end
+        
         if Camera then
             if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = LocalPlayer.Character.Humanoid
@@ -184,6 +179,7 @@ local function spawnShahed()
                 end
 
                 createExplosion(hitbox.Position)
+                -- showNoSignal() -- Тут буде виклик NO SIGNAL пізніше
                 model:Destroy()
             end
         end
