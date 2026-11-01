@@ -626,7 +626,7 @@ function UI:init(Features)
     end
 
     -- ==================================================
-    -- 4. EMOTES TAB (З пошуком та картинками)
+    -- 4. EMOTES TAB
     -- ==================================================
     createSection(EmotePage, "Settings")
     createToggle(EmotePage, "Freeze Emote (Walk with emote)", false, function(v)
@@ -637,7 +637,6 @@ function UI:init(Features)
 
     createSection(EmotePage, "Search & Play")
     
-    -- Пошуковий рядок
     local searchFrame = Instance.new("Frame")
     searchFrame.Size = UDim2.new(1, -16, 0, 40)
     searchFrame.BackgroundColor3 = Theme.Element
@@ -659,7 +658,6 @@ function UI:init(Features)
     searchBox.ClearTextOnFocus = false
     searchBox.Parent = searchFrame
 
-    -- Список емоцій
     local emoteListFrame = Instance.new("Frame")
     emoteListFrame.Size = UDim2.new(1, -16, 0, 350)
     emoteListFrame.BackgroundColor3 = Theme.Element
@@ -685,8 +683,24 @@ function UI:init(Features)
             if child:IsA("TextButton") then child:Destroy() end
         end
 
-        if not Features.Emotes or not Features.Emotes.searchEmotes then return end
-        local results = Features.Emotes:searchEmotes(query)
+        if not Features.Emotes then
+            warn("[UI ERROR] Features.Emotes дорівнює nil! Лоадер не завантажив модуль емоцій.")
+            return
+        end
+
+        if not Features.Emotes.searchEmotes then
+            warn("[UI ERROR] У модулі Emotes немає функції searchEmotes!")
+            return
+        end
+
+        local success, results = pcall(function()
+            return Features.Emotes:searchEmotes(query)
+        end)
+
+        if not success then
+            warn("[UI ERROR] Помилка при пошуку емоцій: " .. tostring(results))
+            return
+        end
 
         for _, emote in ipairs(results) do
             local btn = Instance.new("TextButton")
@@ -731,7 +745,7 @@ function UI:init(Features)
     end
 
     task.spawn(function()
-        task.wait(0.5)
+        task.wait(1)
         refreshEmoteList("")
     end)
 
