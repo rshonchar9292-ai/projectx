@@ -24,14 +24,8 @@ local function log(msg) print("[Shahed] " .. msg) end
 local function logErr(msg) warn("[Shahed ERROR] " .. msg) end
 
 --// ============================================================
---// ЕФЕКТ "NO SIGNAL" (Тимчасово вимкнено)
+--// ВИБУХ
 --// ============================================================
-local function showNoSignal()
-    -- ТУТ БУВ КОД NO SIGNAL. 
-    -- Він вимкнений, щоб ти бачив, як працює флінг.
-    -- Коли закінчиш тести, я поверну його сюди.
-end
-
 local function createExplosion(position)
     local explosion = Instance.new("Explosion")
     explosion.Position = position
