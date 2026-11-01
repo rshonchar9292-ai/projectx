@@ -1,73 +1,118 @@
---// ============================================================
---// LOADER для ProjectX
---// ============================================================
+--// ╔══════════════════════════════════════════════════════════════╗
+--// ║  ProjectX - Loader v1.0                                      ║
+--// ╚══════════════════════════════════════════════════════════════╝
 
-if _G.ProjectXLoaded then
-    warn("[ProjectX] Вже завантажено!")
-    return
+local BASE_URL = "https://raw.githubusercontent.com/rshonchar9292-ai/projectx/main/"
+
+--// ============================================================
+--//  LOG HELPERS
+--// ============================================================
+local function log(msg)
+    print("[ProjectX] " .. tostring(msg))
 end
-_G.ProjectXLoaded = true
 
---// УВАГА: ТУТ ЗМІНЕНО ПОСИЛАННЯ НА projectx
-local BASE = "https://raw.githubusercontent.com/rshonchar9292-ai/projectx/main/"
+local function notify(title, text, duration)
+    pcall(function()
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = title,
+            Text = text,
+            Duration = duration or 5,
+        })
+    end)
+end
 
-local function Load(path)
-    local url = BASE .. path .. "?t=" .. tostring(os.time())
+--// ============================================================
+--//  MODULE LOADER (крапки → слеші)
+--// ============================================================
+local function loadModule(path)
+    local urlPath = path:gsub("%.", "/")
+    local url = BASE_URL .. urlPath .. ".lua"
+
+    log("Завантажую: " .. urlPath)
+
     local ok, code = pcall(function()
         return game:HttpGet(url)
     end)
 
     if not ok then
-        warn("[ProjectX] HTTP-помилка (" .. path .. "):", code)
-        return false
+        log("❌ HTTP FAIL: " .. urlPath)
+        return nil
     end
 
-    if not code or #code < 20 then
-        warn("[ProjectX] Порожня відповідь (" .. path .. ")")
-        return false
+    if not code or #code < 10 then
+        log("❌ ПУСТИЙ КОД: " .. urlPath)
+        return nil
     end
 
-    if code:sub(1, 3) == "404" or code:find("^404:") then
-        warn("[ProjectX] Файл не знайдено (" .. path .. ")")
-        return false
+    if code:find("404: Not Found") then
+        log("❌ 404: " .. urlPath)
+        return nil
     end
 
     local fn, err = loadstring(code)
     if not fn then
-        warn("[ProjectX] Помилка компіляції (" .. path .. "):", err)
-        return false
+        log("❌ COMPILE FAIL: " .. urlPath .. " → " .. tostring(err))
+        return nil
     end
 
-    local runOk, runErr = pcall(fn)
-    if not runOk then
-        warn("[ProjectX] Помилка виконання (" .. path .. "):", runErr)
-        return false
+    local ok2, result = pcall(fn)
+    if not ok2 then
+        log("❌ RUN FAIL: " .. urlPath .. " → " .. tostring(result))
+        return nil
     end
 
-    print("[ProjectX] ✓ " .. path)
-    return true
+    log("✅ OK: " .. urlPath .. " → " .. type(result))
+    return result
 end
 
---// 1. UI
-print("[ProjectX] Завантаження UI...")
-Load("ui.lua")
+--// ============================================================
+--//  LOAD UI
+--// ============================================================
+log("=== СТАРТ ===")
 
---// 2. Невелика пауза для ініціалізації
-task.wait(1)
+local UI = loadModule("ui")
+if not UI then
+    log("❌ UI НЕ ЗАВАНТАЖЕНО — стоп")
+    notify("ProjectX", "UI не завантажено. Перевір консоль.", 10)
+    return
+end
+log("✅ UI OK")
 
---// 3. Модулі
-print("[ProjectX] UI готовий, завантаження модулів...")
+--// ============================================================
+--//  LOAD ALL FEATURES
+--// ============================================================
+local Features = {
+    Movement  = loadModule("features.movement"),
+    Fling     = loadModule("features.fling"),
+    Animation = loadModule("features.animation"),
+    Shahed    = loadModule("features.shahed"), -- ДОДАНО SHAHED
+}
 
-Load("features/aimbot.lua")
-Load("features/silentaim.lua")
-Load("features/esp.lua")
-Load("features/orbitals.lua")
-Load("features/fly.lua")
-Load("features/bunnyhop.lua")
-Load("features/fov.lua")
-Load("features/antiaim.lua")
-Load("features/shahed.lua")
-Load("features/fling.lua")
+--// ============================================================
+--//  LOG FEATURES STATUS
+--// ============================================================
+log("─────────────────────────────")
+log("Movement: "  .. type(Features.Movement))
+log("Fling: "     .. type(Features.Fling))
+log("Animation: " .. type(Features.Animation))
+log("Shahed: "    .. type(Features.Shahed))
+log("─────────────────────────────")
 
-print("[ProjectX] Готово! Меню запущено.")
-print("[ProjectX] Натисни F4 щоб відкрити меню.")
+_G.ProjectXFeatures = Features
+
+--// ============================================================
+--//  INIT UI
+--// ============================================================
+local ok, err = pcall(function()
+    UI:init(Features)
+end)
+
+if not ok then
+    log("❌ UI INIT FAIL: " .. tostring(err))
+    notify("ProjectX Error", "UI init: " .. tostring(err), 15)
+    return
+end
+
+log("✅ UI INIT OK")
+log("=== ГОТОВО ===")
+notify("ProjectX", "Завантажено! F4 — меню", 5)
