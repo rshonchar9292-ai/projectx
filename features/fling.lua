@@ -109,7 +109,7 @@ local function isAlive(plr)
 end
 
 --// ============================================================
---//  METHOD 1: SKIDFLING (з твого файлу, 1-в-1)
+--//  METHOD 1: SKIDFLING
 --// ============================================================
 local function SkidFling(TargetPlayer, duration)
     local startTime = tick()
@@ -273,7 +273,7 @@ local function SkidFling(TargetPlayer, duration)
 end
 
 --// ============================================================
---//  METHOD 2: SHHHLOL (з твого файлу, 1-в-1)
+--//  METHOD 2: SHHHLOL
 --// ============================================================
 local function shhhlol(TargetPlayer)
     local Character = LocalPlayer.Character
@@ -413,7 +413,7 @@ local function shhhlol(TargetPlayer)
 end
 
 --// ============================================================
---//  METHOD 3: YEET (з твого файлу, 1-в-1)
+--//  METHOD 3: YEET
 --// ============================================================
 local function yeet(targetPlayer, duration)
     local lp = LocalPlayer
@@ -541,7 +541,7 @@ local function flingMurderer() return flingRole("Murderer") end
 local function flingInnocent() return flingRole("Innocent") end
 
 --// ============================================================
---//  TOUCH FLING (з твого файлу)
+--//  TOUCH FLING
 --// ============================================================
 local function fling()
     local lp = Players.LocalPlayer
@@ -581,7 +581,7 @@ LocalPlayer.CharacterAdded:Connect(function()
 end)
 
 --// ============================================================
---//  ANTI-FLING (з твого файлу)
+--//  ANTI-FLING
 --// ============================================================
 local function setCanCollideOfModelDescendants(model, bval)
     if not model then return end
@@ -621,7 +621,7 @@ RunService.Stepped:Connect(function()
 end)
 
 --// ============================================================
---//  ANTI-KILL PARTS (з твого файлу)
+--//  ANTI-KILL PARTS
 --// ============================================================
 local function setAntiKillParts(state)
     AntiKillPartsEnabled = state
@@ -649,7 +649,7 @@ local function setAntiKillParts(state)
 end
 
 --// ============================================================
---//  FPD PROTECTION (з твого файлу)
+--//  FPD PROTECTION
 --// ============================================================
 local function setFPDProtection(state)
     FPDProtectionEnabled = state
@@ -699,7 +699,7 @@ local function setFPDProtection(state)
 end
 
 --// ============================================================
---//  NOCLIP (з твого файлу)
+--//  NOCLIP
 --// ============================================================
 local function enableNoclip()
     if SteppedConnection then return end
@@ -805,4 +805,6 @@ log("TrustHub Fling FULL EDITION loaded")
 log("Methods: 1=SkidFling  2=shhhlol  3=yeet")
 log("═══════════════════════════════════")
 
-return Fling.new()
+--// ЗБЕРЕЖЕННЯ ДЛЯ SHAHED
+_G.FotliFling = Fling.new()
+return _G.FotliFling
