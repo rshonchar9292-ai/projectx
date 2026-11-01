@@ -1,6 +1,6 @@
 --// ============================================================
 --// features/shahed.lua
---// Shahed Strike - Steerable Drone Edition (No Signal Disabled)
+--// Shahed Strike - Steerable Drone Edition
 --// ============================================================
 
 local TweenService = game:GetService("TweenService")
@@ -11,7 +11,7 @@ local Debris = game:GetService("Debris")
 local LocalPlayer = Players.LocalPlayer
 
 local CONFIG = {
-    Speed = 50, -- Трохи збільшив швидкість для кращого відчуття польоту
+    Speed = 50,
     Lifetime = 15,
     SpawnDistance = 12,
     Cooldown = 2,
@@ -27,11 +27,9 @@ local function logErr(msg) warn("[Shahed ERROR] " .. msg) end
 --// ЕФЕКТ "NO SIGNAL" (Тимчасово вимкнено)
 --// ============================================================
 local function showNoSignal()
-    --[[ 
-    ТУТ БУВ КОД NO SIGNAL. 
-    Я його закоментував, щоб ти бачив флінг. 
-    Коли закінчиш тести, просто розкоментуй його (прибери --[[ та ]]).
-    ]]
+    -- ТУТ БУВ КОД NO SIGNAL. 
+    -- Він вимкнений, щоб ти бачив, як працює флінг.
+    -- Коли закінчиш тести, я поверну його сюди.
 end
 
 local function createExplosion(position)
@@ -112,7 +110,7 @@ local function spawnShahed()
     local w3 = Instance.new("WeldConstraint", hitbox)
     w3.Part0, w3.Part1 = hitbox, wingR
 
-    -- Додаємо гіроскоп, щоб дрон повертався носом куди летить
+    -- Гіроскоп для поворотів
     local gyro = Instance.new("BodyGyro")
     gyro.MaxTorque = Vector3.new(40000, 40000, 40000)
     gyro.P = 3000
@@ -122,10 +120,9 @@ local function spawnShahed()
     model.Parent = workspace
     log("✅ Дрон створено. Камера перемикається...")
 
-    -- ПЕРЕМИКАННЯ КАМЕРИ НА ДРОНА
+    -- ПЕРЕМИКАННЯ КАМЕРИ
     local originalSubject = Camera.CameraSubject
     Camera.CameraSubject = hitbox
-    -- Віддаляємо камеру трохи назад для кращого огляду
     LocalPlayer.CameraMaxZoomDistance = 25
 
     local startTime = tick()
@@ -143,20 +140,15 @@ local function spawnShahed()
         end
         
         if hitbox and Camera then
-            -- Рухаємось туди, куди дивиться камера
             local lookDir = Camera.CFrame.LookVector
             hitbox.AssemblyLinearVelocity = lookDir * CONFIG.Speed
-            
-            -- Повертаємо дрон носом вперед
             gyro.CFrame = CFrame.lookAt(hitbox.Position, hitbox.Position + lookDir)
         end
     end)
 
-    -- ВІДНОВЛЕННЯ КАМЕРИ (якщо дрон знищено будь-яким способом)
+    -- ВІДНОВЛЕННЯ КАМЕРИ
     model.Destroying:Connect(function()
         if moveConn then moveConn:Disconnect() end
-        
-        -- Повертаємо камеру назад гравцю
         if Camera then
             if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
                 Camera.CameraSubject = LocalPlayer.Character.Humanoid
@@ -168,7 +160,7 @@ local function spawnShahed()
         log("Дрон знищено. Камеру повернено.")
     end)
 
-    -- ДЕТЕКЦІЯ КОЛІЗІЇ
+    -- КОЛІЗІЯ
     hitbox.Touched:Connect(function(hit)
         local char = hit:FindFirstAncestorOfClass("Model")
         
@@ -189,7 +181,7 @@ local function spawnShahed()
                             end)
                         end)
                     else
-                        logErr("Fling модуль не знайдено! Використовую резервний метод.")
+                        logErr("Fling модуль не знайдено!")
                         local hrp = char:FindFirstChild("HumanoidRootPart")
                         if hrp then
                             hrp.AssemblyLinearVelocity = Vector3.new(5000, 5000, 5000)
@@ -198,9 +190,6 @@ local function spawnShahed()
                 end
 
                 createExplosion(hitbox.Position)
-                
-                -- showNoSignal() -- УВІМКНЕШ ПОТІМ
-                
                 model:Destroy()
             end
         end
