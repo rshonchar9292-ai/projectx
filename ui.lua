@@ -738,6 +738,33 @@ function UI:init(Features)
         if Features.Movement then Features.Movement:setNoclip(v) end
     end)
 
+    --// --- SHAHED STRIKE SECTION ---
+    createSection(MovePage, "Shahed Strike")
+
+    createToggle(MovePage, "Enable Shahed (Key: G)", false, function(v)
+        _G.ShahedEnabled = v
+    end)
+
+    local shahedInfoFrame = Instance.new("Frame")
+    shahedInfoFrame.Size = UDim2.new(1, -16, 0, 42)
+    shahedInfoFrame.BackgroundColor3 = Theme.Element
+    shahedInfoFrame.BorderSizePixel = 0
+    shahedInfoFrame.Parent = MovePage
+    corner(shahedInfoFrame, 10)
+
+    local shahedInfoText = Instance.new("TextLabel")
+    shahedInfoText.Size = UDim2.new(1, -20, 1, 0)
+    shahedInfoText.Position = UDim2.new(0, 10, 0, 0)
+    shahedInfoText.BackgroundTransparency = 1
+    shahedInfoText.Text = "Увімкни тогл вище, потім натисни G, щоб запустити дрон."
+    shahedInfoText.TextColor3 = Theme.TextDim
+    shahedInfoText.Font = Enum.Font.Gotham
+    shahedInfoText.TextSize = 11
+    shahedInfoText.TextXAlignment = Enum.TextXAlignment.Left
+    shahedInfoText.TextYAlignment = Enum.TextYAlignment.Center
+    shahedInfoText.Parent = shahedInfoFrame
+    --// ----------------------------
+
     -- ==================================================
     -- FLING TAB (list only)
     -- ==================================================
